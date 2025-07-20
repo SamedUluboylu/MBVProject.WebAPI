@@ -1,6 +1,4 @@
-﻿using MBVProject.Application.Commands.Users;
-using MBVProject.Application.Handlers.Users;
-using MBVProject.Domain.Interfaces;
+﻿using MBVProject.Domain.Interfaces;
 using MBVProject.Infrastructure.Persistance;
 using MBVProject.Infrastructure.Repositories;
 using MBVProject.Infrastructure.Services;
@@ -19,10 +17,10 @@ namespace MBVProject.Infrastructure.DependencyInjection
                 options.UseSqlServer(connectionString));
 
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-
             services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
             services.AddScoped<ILogRepository, LogRepository>();
 
+            // MediatR'ı yalnızca burada kaydedin
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
 
             return services;

@@ -23,33 +23,47 @@ namespace MBVProject.Application.Handlers.Users
 
         public async Task<bool> Handle(CreateAdminCommand request, CancellationToken cancellationToken)
         {
-            // Check if the Admin role exists, if not, create it
-            var adminRole = await _roleManager.FindByNameAsync("Admin");
-            if (adminRole == null)
+            try
             {
-                var roleResult = await _roleManager.CreateAsync(new IdentityRole<Guid>("Admin"));
-                if (!roleResult.Succeeded)
-                    return false;
+                // Check if the Admin role exists, if not, create it
+                var adminRole = await _roleManager.FindByNameAsync("Admin");
+                if (adminRole == null)
+                {
+                    var roleResult = await _roleManager.CreateAsync(new IdentityRole<Guid>("Admin"));
+                    if (!roleResult.Succeeded)
+                        throw new Exception("Failed to create Admin role.");
+                }
+
+                // Create the admin user
+                var user = new User
+                {
+                    UserName = request.Email,
+                    Email = request.Email,
+                    FullName = request.FullName,
+                    IsEmailConfirmed = true // Optionally set to true
+                };
+
+                var result = await _userManager.CreateAsync(user, request.Password);
+                if (!result.Succeeded)
+                {
+                    throw new Exception("Failed to create admin user.");
+                }
+
+                // Add the user to the Admin role
+                var addToRoleResult = await _userManager.AddToRoleAsync(user, "Admin");
+                if (!addToRoleResult.Succeeded)
+                {
+                    throw new Exception("Failed to assign Admin role to user.");
+                }
+
+                return true;
             }
-
-            // Create the admin user
-            var user = new User
+            catch (Exception ex)
             {
-                UserName = request.Email,
-                Email = request.Email,
-                FullName = request.FullName,
-                IsEmailConfirmed = true // Optionally set to true
-            };
-
-            var result = await _userManager.CreateAsync(user, request.Password);
-            if (!result.Succeeded)
-            {
-                return false; // If user creation fails, return false
+                // Log the exception here if needed
+                // You could also consider returning more detailed error messages depending on the needs of the application
+                return false;
             }
-
-            // Add the user to the Admin role
-            var addToRoleResult = await _userManager.AddToRoleAsync(user, "Admin");
-            return addToRoleResult.Succeeded;
         }
-    }   
+    }
 }

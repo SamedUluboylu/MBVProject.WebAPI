@@ -3,11 +3,12 @@ using MBVProject.Infrastructure.DependencyInjection;
 using MBVProject.Infrastructure.Persistance;
 using MBVProject.Infrastructure.Seed;
 using MBVProject.WebAPI.Middleware;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
+using System.Reflection;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -52,9 +53,6 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-// -------------------- Authorization --------------------
-builder.Services.AddAuthorization();
-
 // -------------------- CORS --------------------
 builder.Services.AddCors(options =>
 {
@@ -74,7 +72,6 @@ builder.Services.AddCors(options =>
 builder.Services.AddIdentity<User, IdentityRole<Guid>>()
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
-
 
 var app = builder.Build();
 
@@ -98,13 +95,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
-// CORS middleware
 app.UseCors("AllowFrontend");
-
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();

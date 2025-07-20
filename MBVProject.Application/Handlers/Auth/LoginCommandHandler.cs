@@ -1,18 +1,11 @@
-﻿using MBVProject.Application.Commands.Auth;
+﻿using MediatR;
+using MBVProject.Application.Commands.Auth;
 using MBVProject.Application.DTOs;
 using MBVProject.Domain.Entities;
 using MBVProject.Domain.Interfaces;
-using MediatR;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace MBVProject.Application.Handlers.Auth
 {
@@ -32,25 +25,31 @@ namespace MBVProject.Application.Handlers.Auth
         public async Task<LoginResultDto?> Handle(LoginCommand request, CancellationToken cancellationToken)
         {
             var user = await _userRepository.GetByEmailAsync(request.Email);
-            if (user == null) return null;
+            if (user == null)
+            {
+                return null;  // Kullanıcı bulunamadı
+            }
 
             var result = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, request.Password);
-            if (result == PasswordVerificationResult.Failed) return null;
+            if (result == PasswordVerificationResult.Failed)
+            {
+                return null;  // Şifre hatalı
+            }
 
-            // Roller çek
-            var roles = new List<string> { user.Role }; // Identity kullanıyorsan UserManager.GetRolesAsync()
+            var roles = new List<string> { user.Role };
 
             var token = _jwtTokenGenerator.GenerateToken(user, roles);
 
-            var refresh = Guid.NewGuid().ToString();
-            user.RefreshToken = refresh;
+            var refreshToken = Guid.NewGuid().ToString();
+            user.RefreshToken = refreshToken;
             user.RefreshTokenExpiry = DateTime.UtcNow.AddDays(7);
+
             await _userRepository.UpdateAsync(user);
 
             return new LoginResultDto
             {
                 Token = token,
-                RefreshToken = refresh,
+                RefreshToken = refreshToken,
                 User = new UserDto
                 {
                     Id = user.Id,
@@ -60,5 +59,5 @@ namespace MBVProject.Application.Handlers.Auth
                 }
             };
         }
-    }    
+    }
 }
