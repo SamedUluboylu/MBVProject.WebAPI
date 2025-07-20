@@ -1,0 +1,41 @@
+﻿using MBVProject.Application.Commands.Products;
+using MBVProject.Domain.Entities;
+using MBVProject.Domain.Interfaces;
+using MediatR;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace MBVProject.Application.Handlers.Products
+{
+    public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand, Guid>
+    {
+        private readonly IProductRepository _repository;
+        public CreateProductCommandHandler(IProductRepository repository)
+        {
+            _repository = repository;
+        }
+
+        public async Task<Guid> Handle(CreateProductCommand request, CancellationToken cancellationToken)
+        {
+            var product = new Product
+            {
+                Id = Guid.NewGuid(),
+                Name = request.Name,
+                Description = request.Description,
+                Price = request.Price,
+                StockQuantity = request.StockQuantity,
+                CategoryId = request.CategoryId,
+                BrandId = request.BrandId,
+                ImageUrl = request.ImageUrl,
+                IsFeatured = request.IsFeatured,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            await _repository.AddAsync(product);
+            return product.Id;
+        }
+    }
+}
