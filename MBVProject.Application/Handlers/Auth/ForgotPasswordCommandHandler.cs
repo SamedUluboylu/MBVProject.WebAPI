@@ -11,24 +11,19 @@ namespace MBVProject.Application.Handlers.Auth
 {
     public class ForgotPasswordCommandHandler : IRequestHandler<ForgotPasswordCommand, bool>
     {
-        private readonly IUserRepository _userRepository;
-
-        public ForgotPasswordCommandHandler(IUserRepository userRepository)
-        {
-            _userRepository = userRepository;
-        }
+        private readonly IUserRepository _userRepo;
+        public ForgotPasswordCommandHandler(IUserRepository userRepo) => _userRepo = userRepo;
 
         public async Task<bool> Handle(ForgotPasswordCommand request, CancellationToken cancellationToken)
         {
-            var user = await _userRepository.GetByEmailAsync(request.Email);
-            if (user == null) return false;
+            var user = await _userRepo.GetByEmailAsync(request.Email);
+            if (user == null) return true; // güvenlik için success dön
+            user.ResetPasswordToken = Guid.NewGuid().ToString();
+            user.ResetPasswordExpiry = DateTime.UtcNow.AddHours(1);
+            await _userRepo.UpdateAsync(user);
 
-            user.ResetToken = Guid.NewGuid().ToString();
-            user.ResetTokenExpiry = DateTime.UtcNow.AddHours(1);
-
-            await _userRepository.UpdateAsync(user);
-
+            // TODO: Mail ile reset linkini gönder
             return true;
         }
-    }
+    }   
 }

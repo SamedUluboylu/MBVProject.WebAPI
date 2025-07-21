@@ -1,4 +1,5 @@
 ﻿using MBVProject.Application.Commands.Wishlist;
+using MBVProject.Application.Queries.Wishlist;
 using MBVProject.Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -9,21 +10,21 @@ namespace MBVProject.WebAPI.Controllers;
 
 
 [ApiController]
-[Route("api/wishlist")]
-[Authorize]
+[Route("api/[controller]")]
 public class WishlistController : ControllerBase
 {
     private readonly IMediator _mediator;
     public WishlistController(IMediator mediator) => _mediator = mediator;
-    private Guid GetUserId() => Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
-    [HttpPost("items")]
-    public async Task<IActionResult> Add([FromBody] AddToWishlistCommand cmd)
-    {
-        cmd.UserId = GetUserId();
-        var result = await _mediator.Send(cmd);
-        return result ? Ok() : BadRequest();
-    }
+    [HttpGet]
+    public async Task<IActionResult> Get([FromQuery] Guid userId)
+        => Ok(await _mediator.Send(new GetWishlistQuery(userId)));
 
-    // Remove için benzer handler
+    [HttpPost]
+    public async Task<IActionResult> Add([FromBody] AddToWishlistCommand command)
+        => Ok(await _mediator.Send(command));
+
+    [HttpDelete("{productId}")]
+    public async Task<IActionResult> Remove(Guid productId, [FromQuery] Guid userId)
+        => Ok(await _mediator.Send(new RemoveFromWishlistCommand(userId, productId)));
 }

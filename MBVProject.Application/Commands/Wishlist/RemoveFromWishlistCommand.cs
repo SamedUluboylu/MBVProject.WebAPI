@@ -9,7 +9,12 @@ namespace MBVProject.Application.Commands.Wishlist
 {
     public class RemoveFromWishlistCommand : IRequest<bool>
     {
-        public Guid WishlistId { get; set; }
+        public Guid UserId { get; set; }
         public Guid ProductId { get; set; }
-    }
+        public RemoveFromWishlistCommand(Guid userId, Guid productId)
+        {
+            UserId = userId;
+            ProductId = productId;
+        }
+    }    
 }

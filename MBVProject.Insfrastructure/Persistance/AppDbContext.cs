@@ -1,4 +1,7 @@
 ﻿using MBVProject.Domain.Entities;
+using MBVProject.Domain.Entities.Addresses;
+using MBVProject.Domain.Entities.Roles;
+using MBVProject.Domain.Entities.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace MBVProject.Infrastructure.Persistance
 {
-    public class AppDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
+    public class AppDbContext : DbContext
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
@@ -26,7 +29,10 @@ namespace MBVProject.Infrastructure.Persistance
         public DbSet<Brand> Brands { get; set; } = null!;
         public DbSet<LogEntry> Logs { get; set; } = null!;
         public DbSet<OutboxMessage> OutboxMessages { get; set; } = null!;
-
+        public DbSet<AppUser> Users { get; set; }
+        public DbSet<AppRole> Roles { get; set; }
+        public DbSet<UserRole> UserRoles { get; set; }
+        public DbSet<UserAddress> UserAddresses { get; set; }
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             var entries = ChangeTracker.Entries<BaseEntity>();
@@ -58,6 +64,25 @@ namespace MBVProject.Infrastructure.Persistance
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<UserRole>()
+           .HasKey(ur => new { ur.UserId, ur.RoleId });
+
+            modelBuilder.Entity<UserRole>()
+                .HasOne(ur => ur.User)
+                .WithMany(u => u.UserRoles)
+                .HasForeignKey(ur => ur.UserId);
+
+            modelBuilder.Entity<UserRole>()
+                .HasOne(ur => ur.Role)
+                .WithMany(r => r.UserRoles)
+                .HasForeignKey(ur => ur.RoleId);
+
+            // Adres ilişkisi
+            modelBuilder.Entity<UserAddress>()
+                .HasOne(a => a.User)
+                .WithMany(u => u.Addresses)
+                .HasForeignKey(a => a.UserId);
 
             // Tüm BaseEntity türevlerine global filter (IsDeleted = false)
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())

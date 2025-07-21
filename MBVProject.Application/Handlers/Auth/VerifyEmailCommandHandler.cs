@@ -9,28 +9,23 @@ using System.Threading.Tasks;
 
 namespace MBVProject.Application.Handlers.Auth
 {
-        public class VerifyEmailCommandHandler : IRequestHandler<VerifyEmailCommand, bool>
+    public class VerifyEmailCommandHandler : IRequestHandler<VerifyEmailCommand, bool>
+    {
+        private readonly IUserRepository _userRepo;
+        public VerifyEmailCommandHandler(IUserRepository userRepo) => _userRepo = userRepo;
+
+        public async Task<bool> Handle(VerifyEmailCommand request, CancellationToken cancellationToken)
         {
-            private readonly IUserRepository _userRepository;
+            var user = await _userRepo.GetByEmailAsync(request.Email);
+            if (user == null) return false;
+            if (user.EmailVerificationToken != request.Token || user.EmailVerificationExpiry < DateTime.UtcNow)
+                return false;
 
-            public VerifyEmailCommandHandler(IUserRepository userRepository)
-            {
-                _userRepository = userRepository;
-            }
-
-            public async Task<bool> Handle(VerifyEmailCommand request, CancellationToken cancellationToken)
-            {
-                var user = await _userRepository.GetByEmailAsync(request.Email);
-                if (user == null) return false;
-
-                // Yeni eklediğimiz VerificationToken ile kontrol
-                if (user.VerificationToken != request.Token) return false;
-
-                user.IsEmailConfirmed = true;
-                user.VerificationToken = null;
-                await _userRepository.UpdateAsync(user);
-
-                return true;
-            }
+            user.EmailConfirmed = true;
+            user.EmailVerificationToken = null;
+            user.EmailVerificationExpiry = null;
+            await _userRepo.UpdateAsync(user);
+            return true;
         }
     }
+}   

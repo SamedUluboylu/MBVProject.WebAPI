@@ -1,7 +1,6 @@
 ﻿using MBVProject.Domain.Entities;
 using MBVProject.Infrastructure.DependencyInjection;
 using MBVProject.Infrastructure.Persistance;
-using MBVProject.Infrastructure.Seed;
 using MBVProject.WebAPI.Middleware;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -26,7 +25,7 @@ builder.Host.UseSerilog();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
+ 
 // -------------------- Infrastructure (DB & Repositories) --------------------
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddInfrastructure(connectionString!);
@@ -68,10 +67,6 @@ builder.Services.AddCors(options =>
     });
 });
 
-// -------------------- Identity Services --------------------
-builder.Services.AddIdentity<User, IdentityRole<Guid>>()
-    .AddEntityFrameworkStores<AppDbContext>()
-    .AddDefaultTokenProviders();
 
 var app = builder.Build();
 
@@ -79,13 +74,6 @@ var app = builder.Build();
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseMiddleware<RequestLoggingMiddleware>();
 
-// -------------------- Seed Admin Data (Optional) --------------------
-using (var scope = app.Services.CreateScope())
-{
-    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
-    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
-    await DataSeeder.SeedAdminAsync(userManager, roleManager);  // Seeding the admin user
-}
 
 // -------------------- Pipeline --------------------
 if (app.Environment.IsDevelopment())

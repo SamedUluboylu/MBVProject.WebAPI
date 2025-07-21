@@ -10,5 +10,6 @@ namespace MBVProject.Application.Commands.Coupon
     public class DeleteCouponCommand : IRequest<bool>
     {
         public Guid Id { get; set; }
+        public DeleteCouponCommand(Guid id) => Id = id;
     }
 }

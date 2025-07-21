@@ -1,4 +1,5 @@
 ﻿using MBVProject.Application.Commands.Users;
+using MBVProject.Application.DTOs.Auth;
 using MBVProject.Application.Queries.Users;
 using MBVProject.Domain.Entities;
 using MediatR;
@@ -19,7 +20,7 @@ namespace MBVProject.WebAPI.Controllers
         private Guid GetUserId() =>
             Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
-        [HttpGet("me")]
+        [HttpGet("getprofile")]
         public async Task<IActionResult> GetProfile()
         {
             var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
@@ -28,7 +29,7 @@ namespace MBVProject.WebAPI.Controllers
             return Ok(profile);
         }
 
-        [HttpPut("me")]
+        [HttpPut("sasa")]
         public async Task<IActionResult> UpdateProfile([FromBody] UpdateUserProfileCommand cmd)
         {
             cmd.UserId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);

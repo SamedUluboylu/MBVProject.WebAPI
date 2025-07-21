@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,6 +12,10 @@ namespace MBVProject.Domain.Interfaces
     {
         Task<T?> GetByIdAsync(Guid id);
         Task<IEnumerable<T>> GetAllAsync();
+        Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate); // 🔥 filtreleme
+        Task<bool> AnyAsync(Expression<Func<T, bool>> predicate); // 🔥 var mı yok mu
+        IQueryable<T> Query(); // 🔥 ileri LINQ kullanmak için
+
         Task AddAsync(T entity, string? createdBy = null);
         Task UpdateAsync(T entity, string? updatedBy = null);
         Task SoftDeleteAsync(T entity, string? deletedBy = null);

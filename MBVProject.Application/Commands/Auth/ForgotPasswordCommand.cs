@@ -12,3 +12,4 @@ namespace MBVProject.Application.Commands.Auth
         public string Email { get; set; } = string.Empty;
     }
 }
+

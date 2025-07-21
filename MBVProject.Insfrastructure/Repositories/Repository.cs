@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -31,6 +32,24 @@ namespace MBVProject.Infrastructure.Repositories
             return await _dbSet.Where(x => !x.IsDeleted).ToListAsync();
         }
 
+        public async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate)
+        {
+            // Sadece silinmemişleri getir
+            return await _dbSet.Where(x => !x.IsDeleted).Where(predicate).ToListAsync();
+        }
+
+        public async Task<bool> AnyAsync(Expression<Func<T, bool>> predicate)
+        {
+            // Silinmemişler arasında kontrol et
+            return await _dbSet.Where(x => !x.IsDeleted).AnyAsync(predicate);
+        }
+
+        public IQueryable<T> Query()
+        {
+            // LINQ işlemleri için filtrelenmiş query döndür
+            return _dbSet.Where(x => !x.IsDeleted);
+        }
+
         public async Task AddAsync(T entity, string? createdBy = null)
         {
             entity.CreatedAt = DateTime.UtcNow;
@@ -55,6 +74,7 @@ namespace MBVProject.Infrastructure.Repositories
             _dbSet.Update(entity);
             await _context.SaveChangesAsync();
         }
+
         public async Task HardDeleteAsync(T entity)
         {
             _dbSet.Remove(entity);

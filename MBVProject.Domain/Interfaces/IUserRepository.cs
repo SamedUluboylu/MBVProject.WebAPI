@@ -1,17 +1,17 @@
 ﻿using MBVProject.Domain.Entities;
+using MBVProject.Domain.Entities.Users;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace MBVProject.Domain.Interfaces
 {
-    public interface IUserRepository
+        public interface IUserRepository:IRepository<AppUser>
     {
-        Task<User?> GetByEmailAsync(string email);
-        Task<User?> GetByRefreshTokenAsync(string token);
-        Task AddAsync(User user);
-        Task UpdateAsync(User user);
+            Task<AppUser?> GetByEmailAsync(string email);
+            Task<AppUser?> GetByRefreshTokenAsync(string refreshToken);
     }
-}
+    }

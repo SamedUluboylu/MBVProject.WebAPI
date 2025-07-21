@@ -1,4 +1,5 @@
 ﻿using MBVProject.Application.Commands.Cart;
+using MBVProject.Application.Queries.Cart;
 using MBVProject.Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -16,6 +17,13 @@ namespace MBVProject.WebAPI.Controllers
         public CartController(IMediator mediator) => _mediator = mediator;
         private Guid GetUserId() => Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
+
+        [HttpGet("{userId:guid}")]
+        public async Task<IActionResult> GetCart(Guid userId)
+        {
+            var cart = await _mediator.Send(new GetCartQuery(userId));
+            return Ok(cart);
+        }
         [HttpPost("items")]
         public async Task<IActionResult> AddToCart([FromBody] AddToCartCommand cmd)
         {
