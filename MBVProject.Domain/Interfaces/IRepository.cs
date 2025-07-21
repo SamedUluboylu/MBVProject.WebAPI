@@ -1,4 +1,4 @@
-﻿using MBVProject.Domain.Entities;
+using MBVProject.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,5 +20,6 @@ namespace MBVProject.Domain.Interfaces
         Task UpdateAsync(T entity, string? updatedBy = null);
         Task SoftDeleteAsync(T entity, string? deletedBy = null);
         Task HardDeleteAsync(T entity);
+        Task SaveChangesAsync();
     }
 }
