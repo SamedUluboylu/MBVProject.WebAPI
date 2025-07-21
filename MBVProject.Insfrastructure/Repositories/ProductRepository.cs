@@ -1,4 +1,4 @@
-﻿using MBVProject.Domain.Entities;
+using MBVProject.Domain.Entities;
 using MBVProject.Domain.Interfaces;
 using MBVProject.Infrastructure.Persistance;
 using Microsoft.EntityFrameworkCore;
@@ -11,99 +11,69 @@ using System.Threading.Tasks;
 
 namespace MBVProject.Infrastructure.Repositories
 {
-    public class ProductRepository : IProductRepository
+    public class Repository<T> : IRepository<T> where T : BaseEntity
     {
         private readonly AppDbContext _context;
-        private readonly DbSet<Product> _dbSet;
+        private readonly DbSet<T> _dbSet;
 
-        public ProductRepository(AppDbContext context)
+        public Repository(AppDbContext context)
         {
             _context = context;
-            _dbSet = _context.Set<Product>();
+            _dbSet = _context.Set<T>();
         }
 
-        public async Task AddAsync(Product entity, string? createdBy = null)
+        public async Task<T?> GetByIdAsync(Guid id)
+        {
+            return await _dbSet.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id && !x.IsDeleted);
+        }
+
+        public async Task<IEnumerable<T>> GetAllAsync()
+        {
+            return await _dbSet.Where(x => !x.IsDeleted).AsNoTracking().ToListAsync();
+        }
+
+        public async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate)
+        {
+            return await _dbSet.Where(x => !x.IsDeleted).Where(predicate).AsNoTracking().ToListAsync();
+            return await _dbSet.Where(x => !x.IsDeleted).Where(predicate).AsNoTracking().ToListAsync();
+        }
+
+        public async Task<bool> AnyAsync(Expression<Func<T, bool>> predicate)
+        {
+            // Silinmemişler arasında kontrol et
+            return await _dbSet.Where(x => !x.IsDeleted).AnyAsync(predicate);
+        }
+
+        public IQueryable<T> Query()
+        {
+            // LINQ işlemleri için filtrelenmiş query döndür
+            return _dbSet.Where(x => !x.IsDeleted);
+        }
+
+        public async Task AddAsync(T entity, string? createdBy = null)
         {
             entity.CreatedAt = DateTime.UtcNow;
             entity.CreatedBy = createdBy;
-            await _dbSet.AddAsync(entity);
+        }
+
+        public async Task UpdateAsync(T entity, string? updatedBy = null)
+        {
+            entity.UpdatedAt = DateTime.UtcNow;
+            entity.UpdatedBy = updatedBy;
+            _dbSet.Update(entity);
             await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<Product>> GetAllAsync()
+        public async Task SoftDeleteAsync(T entity, string? deletedBy = null)
         {
-            return await _dbSet.Where(p => !p.IsDeleted).AsNoTracking().ToListAsync();
-        }
-
-        public async Task<Product?> GetByIdAsync(Guid id)
-        {
-            return await _dbSet.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id && !p.IsDeleted);
-        }
-
-        public async Task<IEnumerable<Product>> GetByCategoryAsync(Guid categoryId)
-        {
-            return await _dbSet
-                .Where(p => p.CategoryId == categoryId && !p.IsDeleted)
-                .AsNoTracking()
-                .ToListAsync();
-        }
-
-        public async Task<IEnumerable<Product>> GetFeaturedAsync()
-        {
-            return await _dbSet
-                .Where(p => p.IsFeatured && !p.IsDeleted)
-                .AsNoTracking()
-                .ToListAsync();
-        }
-
-        // 🔥 IRepository<Product> eksik metotlar
-        public async Task<IEnumerable<Product>> FindAsync(Expression<Func<Product, bool>> predicate)
-        {
-            return await _dbSet.Where(p => !p.IsDeleted).Where(predicate).AsNoTracking().ToListAsync();
-        }
-
-        public async Task<bool> AnyAsync(Expression<Func<Product, bool>> predicate)
-        {
-            return await _dbSet.Where(p => !p.IsDeleted).AnyAsync(predicate);
-        }
-
-        public IQueryable<Product> Query()
-        {
-            return _dbSet.Where(p => !p.IsDeleted).AsQueryable();
-        }
-
-        public async Task UpdateAsync(Product entity, string? updatedBy = null)
-        {
-            var existing = await _dbSet.FirstOrDefaultAsync(p => p.Id == entity.Id);
-            if (existing == null) return;
-
-            existing.Name = entity.Name;
-            existing.Description = entity.Description;
-            existing.Price = entity.Price;
-            existing.StockQuantity = entity.StockQuantity;
-            existing.CategoryId = entity.CategoryId;
-            existing.IsFeatured = entity.IsFeatured;
-            existing.UpdatedBy = updatedBy;
-            existing.UpdatedAt = DateTime.UtcNow;
-
-            _dbSet.Update(existing);
+            entity.IsDeleted = true;
+            entity.DeletedAt = DateTime.UtcNow;
+            entity.DeletedBy = deletedBy;
+            _dbSet.Update(entity);
             await _context.SaveChangesAsync();
         }
 
-        public async Task SoftDeleteAsync(Product entity, string? deletedBy = null)
-        {
-            var existing = await _dbSet.FirstOrDefaultAsync(p => p.Id == entity.Id);
-            if (existing == null) return;
-
-            existing.IsDeleted = true;
-            existing.DeletedBy = deletedBy;
-            existing.DeletedAt = DateTime.UtcNow;
-
-            _dbSet.Update(existing);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task HardDeleteAsync(Product entity)
+        public async Task HardDeleteAsync(T entity)
         {
             _dbSet.Remove(entity);
             await _context.SaveChangesAsync();

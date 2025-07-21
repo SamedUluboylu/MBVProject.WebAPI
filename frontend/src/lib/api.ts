@@ -1,63 +1,82 @@
-import axios from 'axios';
+using MBVProject.Domain.Entities;
+using MBVProject.Domain.Interfaces;
+using MBVProject.Infrastructure.Persistance;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Text;
+using System.Threading.Tasks;
 
-const API_BASE_URL = 'https://localhost:7026/api';
+namespace MBVProject.Infrastructure.Repositories
+{
+    public class Repository<T> : IRepository<T> where T : BaseEntity
+    {
+        private readonly AppDbContext _context;
+        private readonly DbSet<T> _dbSet;
 
-export const api = axios.create({
-  baseURL: API_BASE_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
-
-// Request interceptor to add auth token
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
-
-// Response interceptor to handle auth errors
-api.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    if (error.response?.status === 401) {
-      // Try to refresh token
-      const refreshToken = localStorage.getItem('refreshToken');
-      if (refreshToken) {
-        try {
-          const response = await api.post('/auth/refresh', {
-            refreshToken,
-          });
-          
-          const { token, refreshToken: newRefreshToken } = response.data;
-          localStorage.setItem('token', token);
-          localStorage.setItem('refreshToken', newRefreshToken);
-          
-          // Retry the original request
-          error.config.headers.Authorization = `Bearer ${token}`;
-          return api.request(error.config);
-        } catch (refreshError) {
-          // Refresh failed, redirect to login
-          localStorage.removeItem('token');
-          localStorage.removeItem('refreshToken');
-          window.location.href = '/login';
+        public Repository(AppDbContext context)
+        {
+            _context = context;
+            _dbSet = _context.Set<T>();
         }
-      } else {
-        // No refresh token, redirect to login
-        localStorage.removeItem('token');
-        localStorage.removeItem('refreshToken');
-        window.location.href = '/login';
-      }
-    }
-    return Promise.reject(error);
-  }
-);
 
-export default api;
+        public async Task<T?> GetByIdAsync(Guid id)
+        {
+            return await _dbSet.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id && !x.IsDeleted);
+        }
+
+        public async Task<IEnumerable<T>> GetAllAsync()
+        {
+            return await _dbSet.Where(x => !x.IsDeleted).AsNoTracking().ToListAsync();
+        }
+
+        public async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate)
+        {
+            return await _dbSet.Where(x => !x.IsDeleted).Where(predicate).AsNoTracking().ToListAsync();
+            return await _dbSet.Where(x => !x.IsDeleted).Where(predicate).AsNoTracking().ToListAsync();
+        }
+
+        public async Task<bool> AnyAsync(Expression<Func<T, bool>> predicate)
+        {
+            // Silinmemişler arasında kontrol et
+            return await _dbSet.Where(x => !x.IsDeleted).AnyAsync(predicate);
+        }
+
+        public IQueryable<T> Query()
+        {
+            // LINQ işlemleri için filtrelenmiş query döndür
+            return _dbSet.Where(x => !x.IsDeleted);
+        }
+
+        public async Task AddAsync(T entity, string? createdBy = null)
+        {
+            entity.CreatedAt = DateTime.UtcNow;
+            entity.CreatedBy = createdBy;
+        }
+
+        public async Task UpdateAsync(T entity, string? updatedBy = null)
+        {
+            entity.UpdatedAt = DateTime.UtcNow;
+            entity.UpdatedBy = updatedBy;
+            _dbSet.Update(entity);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task SoftDeleteAsync(T entity, string? deletedBy = null)
+        {
+            entity.IsDeleted = true;
+            entity.DeletedAt = DateTime.UtcNow;
+            entity.DeletedBy = deletedBy;
+            _dbSet.Update(entity);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task HardDeleteAsync(T entity)
+        {
+            _dbSet.Remove(entity);
+            await _context.SaveChangesAsync();
+        }
+    }
+}

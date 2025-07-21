@@ -1,4 +1,4 @@
-﻿using MBVProject.Domain.Entities;
+using MBVProject.Domain.Entities;
 using MBVProject.Domain.Interfaces;
 using MBVProject.Infrastructure.Persistance;
 using Microsoft.EntityFrameworkCore;
@@ -11,51 +11,52 @@ using System.Threading.Tasks;
 
 namespace MBVProject.Infrastructure.Repositories
 {
-    public class CategoryRepository : ICategoryRepository
+    public class Repository<T> : IRepository<T> where T : BaseEntity
     {
         private readonly AppDbContext _context;
-        private readonly DbSet<Category> _dbSet;
+        private readonly DbSet<T> _dbSet;
 
-        public CategoryRepository(AppDbContext context)
+        public Repository(AppDbContext context)
         {
             _context = context;
-            _dbSet = _context.Set<Category>();
+            _dbSet = _context.Set<T>();
         }
 
-        public async Task<Category?> GetByIdAsync(Guid id)
+        public async Task<T?> GetByIdAsync(Guid id)
         {
-            return await _dbSet.FirstOrDefaultAsync(c => c.Id == id && !c.IsDeleted);
+            return await _dbSet.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id && !x.IsDeleted);
         }
 
-        public async Task<IEnumerable<Category>> GetAllAsync()
+        public async Task<IEnumerable<T>> GetAllAsync()
         {
-            return await _dbSet.Where(c => !c.IsDeleted).ToListAsync();
+            return await _dbSet.Where(x => !x.IsDeleted).AsNoTracking().ToListAsync();
         }
 
-        public async Task<IEnumerable<Category>> FindAsync(Expression<Func<Category, bool>> predicate)
+        public async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate)
         {
-            return await _dbSet.Where(c => !c.IsDeleted).Where(predicate).ToListAsync();
+            return await _dbSet.Where(x => !x.IsDeleted).Where(predicate).AsNoTracking().ToListAsync();
+            return await _dbSet.Where(x => !x.IsDeleted).Where(predicate).AsNoTracking().ToListAsync();
         }
 
-        public async Task<bool> AnyAsync(Expression<Func<Category, bool>> predicate)
+        public async Task<bool> AnyAsync(Expression<Func<T, bool>> predicate)
         {
-            return await _dbSet.Where(c => !c.IsDeleted).AnyAsync(predicate);
+            // Silinmemişler arasında kontrol et
+            return await _dbSet.Where(x => !x.IsDeleted).AnyAsync(predicate);
         }
 
-        public IQueryable<Category> Query()
+        public IQueryable<T> Query()
         {
-            return _dbSet.Where(c => !c.IsDeleted);
+            // LINQ işlemleri için filtrelenmiş query döndür
+            return _dbSet.Where(x => !x.IsDeleted);
         }
 
-        public async Task AddAsync(Category entity, string? createdBy = null)
+        public async Task AddAsync(T entity, string? createdBy = null)
         {
             entity.CreatedAt = DateTime.UtcNow;
             entity.CreatedBy = createdBy;
-            await _dbSet.AddAsync(entity);
-            await _context.SaveChangesAsync();
         }
 
-        public async Task UpdateAsync(Category entity, string? updatedBy = null)
+        public async Task UpdateAsync(T entity, string? updatedBy = null)
         {
             entity.UpdatedAt = DateTime.UtcNow;
             entity.UpdatedBy = updatedBy;
@@ -63,7 +64,7 @@ namespace MBVProject.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task SoftDeleteAsync(Category entity, string? deletedBy = null)
+        public async Task SoftDeleteAsync(T entity, string? deletedBy = null)
         {
             entity.IsDeleted = true;
             entity.DeletedAt = DateTime.UtcNow;
@@ -72,7 +73,7 @@ namespace MBVProject.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task HardDeleteAsync(Category entity)
+        public async Task HardDeleteAsync(T entity)
         {
             _dbSet.Remove(entity);
             await _context.SaveChangesAsync();

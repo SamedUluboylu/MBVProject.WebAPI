@@ -1,4 +1,4 @@
-﻿using MBVProject.Domain.Entities;
+using MBVProject.Domain.Entities;
 using MBVProject.Domain.Interfaces;
 using MBVProject.Infrastructure.Persistance;
 using Microsoft.EntityFrameworkCore;
@@ -24,18 +24,18 @@ namespace MBVProject.Infrastructure.Repositories
 
         public async Task<T?> GetByIdAsync(Guid id)
         {
-            return await _dbSet.FirstOrDefaultAsync(x => x.Id == id && !x.IsDeleted);
+            return await _dbSet.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id && !x.IsDeleted);
         }
 
         public async Task<IEnumerable<T>> GetAllAsync()
         {
-            return await _dbSet.Where(x => !x.IsDeleted).ToListAsync();
+            return await _dbSet.Where(x => !x.IsDeleted).AsNoTracking().ToListAsync();
         }
 
         public async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate)
         {
             // Sadece silinmemişleri getir
-            return await _dbSet.Where(x => !x.IsDeleted).Where(predicate).ToListAsync();
+            return await _dbSet.Where(x => !x.IsDeleted).Where(predicate).AsNoTracking().ToListAsync();
         }
 
         public async Task<bool> AnyAsync(Expression<Func<T, bool>> predicate)
@@ -55,7 +55,6 @@ namespace MBVProject.Infrastructure.Repositories
             entity.CreatedAt = DateTime.UtcNow;
             entity.CreatedBy = createdBy;
             await _dbSet.AddAsync(entity);
-            await _context.SaveChangesAsync();
         }
 
         public async Task UpdateAsync(T entity, string? updatedBy = null)

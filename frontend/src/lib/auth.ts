@@ -1,76 +1,82 @@
-import { api } from './api';
+using MBVProject.Domain.Entities;
+using MBVProject.Domain.Interfaces;
+using MBVProject.Infrastructure.Persistance;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Text;
+using System.Threading.Tasks;
 
-export interface User {
-  id: string;
-  email: string;
-  fullName: string;
-  role: string;
+namespace MBVProject.Infrastructure.Repositories
+{
+    public class Repository<T> : IRepository<T> where T : BaseEntity
+    {
+        private readonly AppDbContext _context;
+        private readonly DbSet<T> _dbSet;
+
+        public Repository(AppDbContext context)
+        {
+            _context = context;
+            _dbSet = _context.Set<T>();
+        }
+
+        public async Task<T?> GetByIdAsync(Guid id)
+        {
+            return await _dbSet.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id && !x.IsDeleted);
+        }
+
+        public async Task<IEnumerable<T>> GetAllAsync()
+        {
+            return await _dbSet.Where(x => !x.IsDeleted).AsNoTracking().ToListAsync();
+        }
+
+        public async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate)
+        {
+            return await _dbSet.Where(x => !x.IsDeleted).Where(predicate).AsNoTracking().ToListAsync();
+            return await _dbSet.Where(x => !x.IsDeleted).Where(predicate).AsNoTracking().ToListAsync();
+        }
+
+        public async Task<bool> AnyAsync(Expression<Func<T, bool>> predicate)
+        {
+            // Silinmemişler arasında kontrol et
+            return await _dbSet.Where(x => !x.IsDeleted).AnyAsync(predicate);
+        }
+
+        public IQueryable<T> Query()
+        {
+            // LINQ işlemleri için filtrelenmiş query döndür
+            return _dbSet.Where(x => !x.IsDeleted);
+        }
+
+        public async Task AddAsync(T entity, string? createdBy = null)
+        {
+            entity.CreatedAt = DateTime.UtcNow;
+            entity.CreatedBy = createdBy;
+        }
+
+        public async Task UpdateAsync(T entity, string? updatedBy = null)
+        {
+            entity.UpdatedAt = DateTime.UtcNow;
+            entity.UpdatedBy = updatedBy;
+            _dbSet.Update(entity);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task SoftDeleteAsync(T entity, string? deletedBy = null)
+        {
+            entity.IsDeleted = true;
+            entity.DeletedAt = DateTime.UtcNow;
+            entity.DeletedBy = deletedBy;
+            _dbSet.Update(entity);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task HardDeleteAsync(T entity)
+        {
+            _dbSet.Remove(entity);
+            await _context.SaveChangesAsync();
+        }
+    }
 }
-
-export interface LoginRequest {
-  email: string;
-  password: string;
-}
-
-export interface RegisterRequest {
-  email: string;
-  password: string;
-  fullName: string;
-}
-
-export interface LoginResponse {
-  token: string;
-  refreshToken: string;
-  user: User;
-}
-
-export const authApi = {
-  login: async (data: LoginRequest): Promise<LoginResponse> => {
-    const response = await api.post('/auth/login', data);
-    return response.data;
-  },
-
-  register: async (data: RegisterRequest): Promise<{ success: boolean }> => {
-    const response = await api.post('/auth/register', data);
-    return response.data;
-  },
-
-  refreshToken: async (refreshToken: string): Promise<LoginResponse> => {
-    const response = await api.post('/auth/refresh', { refreshToken });
-    return response.data;
-  },
-
-  forgotPassword: async (email: string): Promise<{ success: boolean }> => {
-    const response = await api.post('/auth/forgot-password', { email });
-    return response.data;
-  },
-
-  resetPassword: async (data: {
-    email: string;
-    token: string;
-    newPassword: string;
-  }): Promise<{ success: boolean }> => {
-    const response = await api.post('/auth/reset-password', data);
-    return response.data;
-  },
-};
-
-export const getStoredUser = (): User | null => {
-  const userStr = localStorage.getItem('user');
-  return userStr ? JSON.parse(userStr) : null;
-};
-
-export const getStoredToken = (): string | null => {
-  return localStorage.getItem('token');
-};
-
-export const isAuthenticated = (): boolean => {
-  return !!getStoredToken();
-};
-
-export const logout = (): void => {
-  localStorage.removeItem('token');
-  localStorage.removeItem('refreshToken');
-  localStorage.removeItem('user');
-  window.location.href = '/login';
-};
