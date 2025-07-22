@@ -1,82 +1,101 @@
-using MBVProject.Domain.Entities;
-using MBVProject.Domain.Interfaces;
-using MBVProject.Infrastructure.Persistance;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Toaster } from 'react-hot-toast';
+import { AuthProvider } from './contexts/AuthContext';
+import { CartProvider } from './contexts/CartContext';
+import { Layout } from './components/layout/Layout';
+import { ProtectedRoute } from './components/ProtectedRoute';
 
-namespace MBVProject.Infrastructure.Repositories
-{
-    public class Repository<T> : IRepository<T> where T : BaseEntity
-    {
-        private readonly AppDbContext _context;
-        private readonly DbSet<T> _dbSet;
+// Pages
+import { HomePage } from './pages/HomePage';
+import { ProductsPage } from './pages/ProductsPage';
+import { ProductDetailPage } from './pages/ProductDetailPage';
+import { CartPage } from './pages/CartPage';
+import { LoginPage } from './pages/auth/LoginPage';
+import { RegisterPage } from './pages/auth/RegisterPage';
+import { ProfilePage } from './pages/ProfilePage';
+import { OrdersPage } from './pages/OrdersPage';
 
-        public Repository(AppDbContext context)
-        {
-            _context = context;
-            _dbSet = _context.Set<T>();
-        }
+// Admin Pages
+import { AdminLayout } from './components/admin/AdminLayout';
+import { AdminDashboard } from './pages/admin/AdminDashboard';
+import { ProductManagement } from './pages/admin/ProductManagement';
 
-        public async Task<T?> GetByIdAsync(Guid id)
-        {
-            return await _dbSet.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id && !x.IsDeleted);
-        }
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
-        public async Task<IEnumerable<T>> GetAllAsync()
-        {
-            return await _dbSet.Where(x => !x.IsDeleted).AsNoTracking().ToListAsync();
-        }
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <CartProvider>
+          <Router>
+            <div className="min-h-screen bg-gray-50">
+              <Routes>
+                {/* Auth Routes */}
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/register" element={<RegisterPage />} />
 
-        public async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate)
-        {
-            return await _dbSet.Where(x => !x.IsDeleted).Where(predicate).AsNoTracking().ToListAsync();
-            return await _dbSet.Where(x => !x.IsDeleted).Where(predicate).AsNoTracking().ToListAsync();
-        }
+                {/* Admin Routes */}
+                <Route
+                  path="/admin/*"
+                  element={
+                    <ProtectedRoute requiredRole="Admin">
+                      <AdminLayout />
+                    </ProtectedRoute>
+                  }
+                >
+                  <Route index element={<AdminDashboard />} />
+                  <Route path="products" element={<ProductManagement />} />
+                </Route>
 
-        public async Task<bool> AnyAsync(Expression<Func<T, bool>> predicate)
-        {
-            // Silinmemişler arasında kontrol et
-            return await _dbSet.Where(x => !x.IsDeleted).AnyAsync(predicate);
-        }
-
-        public IQueryable<T> Query()
-        {
-            // LINQ işlemleri için filtrelenmiş query döndür
-            return _dbSet.Where(x => !x.IsDeleted);
-        }
-
-        public async Task AddAsync(T entity, string? createdBy = null)
-        {
-            entity.CreatedAt = DateTime.UtcNow;
-            entity.CreatedBy = createdBy;
-        }
-
-        public async Task UpdateAsync(T entity, string? updatedBy = null)
-        {
-            entity.UpdatedAt = DateTime.UtcNow;
-            entity.UpdatedBy = updatedBy;
-            _dbSet.Update(entity);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task SoftDeleteAsync(T entity, string? deletedBy = null)
-        {
-            entity.IsDeleted = true;
-            entity.DeletedAt = DateTime.UtcNow;
-            entity.DeletedBy = deletedBy;
-            _dbSet.Update(entity);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task HardDeleteAsync(T entity)
-        {
-            _dbSet.Remove(entity);
-            await _context.SaveChangesAsync();
-        }
-    }
+                {/* Public Routes */}
+                <Route
+                  path="/*"
+                  element={
+                    <Layout>
+                      <Routes>
+                        <Route index element={<HomePage />} />
+                        <Route path="products" element={<ProductsPage />} />
+                        <Route path="products/:id" element={<ProductDetailPage />} />
+                        <Route path="cart" element={<CartPage />} />
+                        
+                        {/* Protected Routes */}
+                        <Route
+                          path="profile"
+                          element={
+                            <ProtectedRoute>
+                              <ProfilePage />
+                            </ProtectedRoute>
+                          }
+                        />
+                        <Route
+                          path="orders"
+                          element={
+                            <ProtectedRoute>
+                              <OrdersPage />
+                            </ProtectedRoute>
+                          }
+                        />
+                      </Routes>
+                    </Layout>
+                  }
+                />
+              </Routes>
+            </div>
+            <Toaster position="top-right" />
+          </Router>
+        </CartProvider>
+      </AuthProvider>
+    </QueryClientProvider>
+  );
 }
+
+export default App;

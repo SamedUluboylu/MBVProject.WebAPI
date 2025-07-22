@@ -34,19 +34,16 @@ namespace MBVProject.Infrastructure.Repositories
 
         public async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate)
         {
-            // Sadece silinmemişleri getir
             return await _dbSet.Where(x => !x.IsDeleted).Where(predicate).AsNoTracking().ToListAsync();
         }
 
         public async Task<bool> AnyAsync(Expression<Func<T, bool>> predicate)
         {
-            // Silinmemişler arasında kontrol et
             return await _dbSet.Where(x => !x.IsDeleted).AnyAsync(predicate);
         }
 
         public IQueryable<T> Query()
         {
-            // LINQ işlemleri için filtrelenmiş query döndür
             return _dbSet.Where(x => !x.IsDeleted);
         }
 
@@ -62,7 +59,6 @@ namespace MBVProject.Infrastructure.Repositories
             entity.UpdatedAt = DateTime.UtcNow;
             entity.UpdatedBy = updatedBy;
             _dbSet.Update(entity);
-            await _context.SaveChangesAsync();
         }
 
         public async Task SoftDeleteAsync(T entity, string? deletedBy = null)
@@ -71,12 +67,15 @@ namespace MBVProject.Infrastructure.Repositories
             entity.DeletedAt = DateTime.UtcNow;
             entity.DeletedBy = deletedBy;
             _dbSet.Update(entity);
-            await _context.SaveChangesAsync();
         }
 
         public async Task HardDeleteAsync(T entity)
         {
             _dbSet.Remove(entity);
+        }
+
+        public async Task SaveChangesAsync()
+        {
             await _context.SaveChangesAsync();
         }
     }

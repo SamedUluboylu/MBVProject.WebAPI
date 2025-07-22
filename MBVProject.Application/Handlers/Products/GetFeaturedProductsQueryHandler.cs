@@ -1,4 +1,5 @@
-﻿using MBVProject.Application.DTOs;
+using MBVProject.Application.DTOs;
+using MBVProject.Application.Queries.Products;
 using MBVProject.Domain.Interfaces;
 using MediatR;
 using System;
@@ -11,22 +12,27 @@ namespace MBVProject.Application.Handlers.Products
 {
     public class GetFeaturedProductsQueryHandler : IRequestHandler<GetFeaturedProductsQuery, IEnumerable<ProductDto>>
     {
-        private readonly IProductRepository _repo;
+        private readonly IProductRepository _productRepository;
 
-        public GetFeaturedProductsQueryHandler(IProductRepository repo)
+        public GetFeaturedProductsQueryHandler(IProductRepository productRepository)
         {
-            _repo = repo;
+            _productRepository = productRepository;
         }
 
         public async Task<IEnumerable<ProductDto>> Handle(GetFeaturedProductsQuery request, CancellationToken cancellationToken)
         {
-            var products = await _repo.GetFeaturedAsync();
+            var products = await _productRepository.GetFeaturedAsync();
             return products.Select(p => new ProductDto
             {
                 Id = p.Id,
                 Name = p.Name,
+                Description = p.Description,
                 Price = p.Price,
-                Description = p.Description
+                StockQuantity = p.StockQuantity,
+                CategoryId = p.CategoryId,
+                BrandId = p.BrandId,
+                ImageUrl = p.ImageUrl,
+                IsFeatured = p.IsFeatured
             });
         }
     }
