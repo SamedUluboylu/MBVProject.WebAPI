@@ -43,8 +43,8 @@ export const authApi = {
     try {
       const payload = JSON.parse(atob(token.split('.')[1]));
       return {
-        id: payload.sub,
-        email: payload.email,
+        id: payload.sub || payload.nameid,
+        email: payload.email || payload.unique_name,
         roles: payload.role ? (Array.isArray(payload.role) ? payload.role : [payload.role]) : [],
       };
     } catch {

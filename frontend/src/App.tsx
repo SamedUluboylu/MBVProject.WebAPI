@@ -48,13 +48,15 @@ function App() {
                   path="/admin/*"
                   element={
                     <ProtectedRoute requiredRole="Admin">
-                      <AdminLayout />
+                      <Routes>
+                        <Route path="/*" element={<AdminLayout />}>
+                          <Route index element={<AdminDashboard />} />
+                          <Route path="products" element={<ProductManagement />} />
+                        </Route>
+                      </Routes>
                     </ProtectedRoute>
                   }
-                >
-                  <Route index element={<AdminDashboard />} />
-                  <Route path="products" element={<ProductManagement />} />
-                </Route>
+                />
 
                 {/* Public Routes */}
                 <Route

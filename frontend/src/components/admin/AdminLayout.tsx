@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, Outlet, useLocation } from 'react-router-dom';
+import { Link, Outlet, useLocation, Navigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { 
   HomeIcon,
@@ -14,6 +14,10 @@ import {
 export function AdminLayout() {
   const { user, logout } = useAuth();
   const location = useLocation();
+
+  if (!user?.roles.includes('Admin')) {
+    return <Navigate to="/" replace />;
+  }
 
   const navigation = [
     { name: 'Dashboard', href: '/admin', icon: HomeIcon },
