@@ -1,4 +1,5 @@
-﻿using MBVProject.Domain.Entities;
+﻿using MBVProject.Domain.Base;
+using MBVProject.Domain.Entities;
 using MBVProject.Domain.Entities.Addresses;
 using MBVProject.Domain.Entities.Roles;
 using MBVProject.Domain.Entities.Users;

@@ -14,23 +14,24 @@ namespace MBVProject.Infrastructure.Repositories
     {
         private readonly AppDbContext _context;
 
-        public ProductRepository(AppDbContext context) : base(context)
+        public ProductRepository(AppDbContext context):base(context)
         {
             _context = context;
+        }
+
+
+        public async Task<IEnumerable<Product>> GetByCategoryAsync(Guid categoryId)
+        {
+            return await _dbSet
+                .Where(p => p.CategoryId == categoryId && !p.IsDeleted)
+                .AsNoTracking()
+                .ToListAsync();
         }
 
         public async Task<IEnumerable<Product>> GetFeaturedAsync()
         {
             return await _context.Products
                 .Where(p => p.IsFeatured && !p.IsDeleted)
-                .AsNoTracking()
-                .ToListAsync();
-        }
-
-        public async Task<IEnumerable<Product>> GetByCategoryAsync(Guid categoryId)
-        {
-            return await _context.Products
-                .Where(p => p.CategoryId == categoryId && !p.IsDeleted)
                 .AsNoTracking()
                 .ToListAsync();
         }

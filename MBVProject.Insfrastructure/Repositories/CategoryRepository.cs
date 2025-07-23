@@ -11,8 +11,13 @@ namespace MBVProject.Infrastructure.Repositories
 {
     public class CategoryRepository : Repository<Category>, ICategoryRepository
     {
-        public CategoryRepository(AppDbContext context) : base(context)
+        private readonly AppDbContext _context;
+        private readonly DbSet<Category> _dbSet;
+
+        public CategoryRepository(AppDbContext context): base(context)
         {
+            _context = context;
+            _dbSet = _context.Set<Category>();
         }
     }
 }

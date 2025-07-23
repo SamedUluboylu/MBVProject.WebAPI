@@ -10,8 +10,8 @@ using System.Threading.Tasks;
 namespace MBVProject.Domain.Interfaces
 {
         public interface IUserRepository:IRepository<AppUser>
-    {
+        {
             Task<AppUser?> GetByEmailAsync(string email);
             Task<AppUser?> GetByRefreshTokenAsync(string refreshToken);
-    }
-    }
+      }
+   }
