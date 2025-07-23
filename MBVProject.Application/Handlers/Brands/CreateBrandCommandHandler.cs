@@ -30,7 +30,6 @@ namespace MBVProject.Application.Handlers.Brands
             };
 
             await _brandRepository.AddAsync(brand);
-            await _brandRepository.SaveChangesAsync();
             
             return brand.Id;
         }

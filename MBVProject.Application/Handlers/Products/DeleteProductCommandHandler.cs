@@ -24,7 +24,6 @@ namespace MBVProject.Application.Handlers.Products
             if (product == null) return false;
 
             await _productRepository.SoftDeleteAsync(product);
-            await _productRepository.SaveChangesAsync();
             
             return true;
         }

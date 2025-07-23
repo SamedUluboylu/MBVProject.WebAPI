@@ -30,7 +30,6 @@ namespace MBVProject.Application.Handlers.Brands
             brand.LogoUrl = request.LogoUrl;
 
             await _brandRepository.UpdateAsync(brand);
-            await _brandRepository.SaveChangesAsync();
             
             return true;
         }

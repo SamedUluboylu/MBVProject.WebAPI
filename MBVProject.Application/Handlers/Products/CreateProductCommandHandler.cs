@@ -34,7 +34,6 @@ namespace MBVProject.Application.Handlers.Products
             };
 
             await _productRepository.AddAsync(product);
-            await _productRepository.SaveChangesAsync();
             
             return product.Id;
         }

@@ -25,7 +25,6 @@ namespace MBVProject.Application.Handlers.Categories
             if (category == null) return false;
 
             await _categoryRepository.SoftDeleteAsync(category);
-            await _categoryRepository.SaveChangesAsync();
             
             return true;
         }

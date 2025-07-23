@@ -31,7 +31,6 @@ namespace MBVProject.Application.Handlers.Categories
             };
 
             await _categoryRepository.AddAsync(category);
-            await _categoryRepository.SaveChangesAsync();
             
             return category.Id;
         }

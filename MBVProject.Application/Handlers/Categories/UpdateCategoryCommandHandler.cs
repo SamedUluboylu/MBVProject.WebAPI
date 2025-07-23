@@ -31,7 +31,6 @@ namespace MBVProject.Application.Handlers.Categories
             category.ImageUrl = request.ImageUrl;
 
             await _categoryRepository.UpdateAsync(category);
-            await _categoryRepository.SaveChangesAsync();
             
             return true;
         }

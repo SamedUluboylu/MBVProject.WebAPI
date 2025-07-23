@@ -33,7 +33,6 @@ namespace MBVProject.Application.Handlers.Products
             product.IsFeatured = request.IsFeatured;
 
             await _productRepository.UpdateAsync(product);
-            await _productRepository.SaveChangesAsync();
             
             return true;
         }

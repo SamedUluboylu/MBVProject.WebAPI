@@ -25,7 +25,6 @@ namespace MBVProject.Application.Handlers.Brands
             if (brand == null) return false;
 
             await _brandRepository.SoftDeleteAsync(brand);
-            await _brandRepository.SaveChangesAsync();
             
             return true;
         }

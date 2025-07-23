@@ -32,5 +32,25 @@ namespace MBVProject.Domain.Interfaces
         Task SoftDeleteRangeAsync(IEnumerable<T> entities, string? deletedBy = null);
 
         Task HardDeleteAsync(T entity);
+        Task HardDeleteRangeAsync(IEnumerable<T> entities);
+
+        // Sayfalama & geliþmiþ filtre
+        Task<PagedResult<T>> GetPagedAsync(
+            Expression<Func<T, bool>>? predicate = null,
+            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
+            int page = 1,
+            int pageSize = 20,
+            bool asNoTracking = true,
+            bool withDeleted = false);
+
+        // Projection ile select/map
+        Task<List<TResult>> SelectAsync<TResult>(
+            Expression<Func<T, bool>>? predicate,
+            Expression<Func<T, TResult>> selector,
+            int? take = null,
+            int? skip = null,
+            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
+            bool asNoTracking = true,
+            bool withDeleted = false);
     }
 }
