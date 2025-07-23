@@ -10,8 +10,8 @@ namespace MBVProject.Domain.Entities.Users
     public class UserRole
     {
         public Guid UserId { get; set; }
-        public AppUser User { get; set; }
+        public AppUser? User { get; set; }
         public Guid RoleId { get; set; }
-        public AppRole Role { get; set; }
+        public AppRole? Role { get; set; }
     }   
 }

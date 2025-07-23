@@ -1,4 +1,5 @@
-﻿using MBVProject.Domain.Entities.Addresses;
+﻿using MBVProject.Domain.Base;
+using MBVProject.Domain.Entities.Addresses;
 using System;
 using System.Collections.Generic;
 using System.Linq;

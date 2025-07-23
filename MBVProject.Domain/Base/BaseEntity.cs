@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MBVProject.Domain.Entities
+namespace MBVProject.Domain.Base
 {
     public abstract class BaseEntity
     {

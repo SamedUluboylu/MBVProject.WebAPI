@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MBVProject.Domain.Base;
+using System;
 using System.Collections.Generic;
 
 namespace MBVProject.Domain.Entities
