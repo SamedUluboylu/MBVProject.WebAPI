@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { publicApi, PublicProduct } from '../../services/publicApi';
 import { useCart } from '../../contexts/CartContext';
+import { useToast } from '../../contexts/ToastContext';
 
 const ProductCatalog: React.FC = () => {
   const [products, setProducts] = useState<PublicProduct[]>([]);
@@ -9,22 +10,38 @@ const ProductCatalog: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
+  const [sortBy, setSortBy] = useState('');
+  const [minPrice, setMinPrice] = useState('');
+  const [maxPrice, setMaxPrice] = useState('');
+  const [showFilters, setShowFilters] = useState(false);
   const { addToCart } = useCart();
+  const { showToast } = useToast();
 
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      const result = await publicApi.products.getCatalog({
+      const params: any = {
         pageNumber: currentPage,
         pageSize: 12,
         searchTerm: searchTerm || undefined,
         inStockOnly: true,
-      });
+      };
+
+      if (minPrice) params.minPrice = parseFloat(minPrice);
+      if (maxPrice) params.maxPrice = parseFloat(maxPrice);
+      if (sortBy) {
+        const [field, direction] = sortBy.split('_');
+        params.sortBy = field;
+        params.isDescending = direction === 'desc';
+      }
+
+      const result = await publicApi.products.getCatalog(params);
       setProducts(result.items);
       setTotalPages(result.totalPages);
     } catch (error) {
       console.error('Error fetching products:', error);
       setProducts([]);
+      showToast('Ürünler yüklenirken hata oluştu', 'error');
     } finally {
       setLoading(false);
     }
@@ -32,7 +49,7 @@ const ProductCatalog: React.FC = () => {
 
   useEffect(() => {
     fetchProducts();
-  }, [currentPage, searchTerm]);
+  }, [currentPage, searchTerm, sortBy, minPrice, maxPrice]);
 
   const handleAddToCart = (product: PublicProduct, e: React.MouseEvent) => {
     e.preventDefault();
@@ -43,6 +60,15 @@ const ProductCatalog: React.FC = () => {
       price: product.price,
       quantity: 1,
     });
+    showToast(`${product.name} sepete eklendi!`, 'success');
+  };
+
+  const clearFilters = () => {
+    setSearchTerm('');
+    setSortBy('');
+    setMinPrice('');
+    setMaxPrice('');
+    setCurrentPage(1);
   };
 
   if (loading) {
@@ -61,17 +87,79 @@ const ProductCatalog: React.FC = () => {
           Ürünleri Keşfedin
         </h1>
         <p className="text-slate-600 mb-4 sm:mb-6 text-sm sm:text-base">Kaliteli ürünler koleksiyonumuza göz atın</p>
-        <div className="relative max-w-2xl">
-          <input
-            type="text"
-            placeholder="Ürün ara..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full px-4 py-3 sm:px-6 sm:py-4 pl-12 sm:pl-14 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all text-slate-900 placeholder-slate-400 text-sm sm:text-base"
-          />
-          <svg className="absolute left-4 sm:left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
+
+        <div className="space-y-4">
+          <div className="relative max-w-2xl">
+            <input
+              type="text"
+              placeholder="Ürün ara..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full px-4 py-3 sm:px-6 sm:py-4 pl-12 sm:pl-14 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all text-slate-900 placeholder-slate-400 text-sm sm:text-base"
+            />
+            <svg className="absolute left-4 sm:left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+
+          <div className="flex flex-wrap gap-3">
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-white border-2 border-slate-200 rounded-xl hover:border-blue-500 hover:bg-blue-50 transition-all text-slate-700 font-medium"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+              </svg>
+              Filtreler
+            </button>
+
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="px-4 py-2 bg-white border-2 border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 transition-all text-slate-700 font-medium"
+            >
+              <option value="">Sırala</option>
+              <option value="price_asc">Fiyat (Düşük - Yüksek)</option>
+              <option value="price_desc">Fiyat (Yüksek - Düşük)</option>
+              <option value="name_asc">İsim (A-Z)</option>
+              <option value="name_desc">İsim (Z-A)</option>
+              <option value="createdAt_desc">En Yeni</option>
+            </select>
+
+            {(searchTerm || sortBy || minPrice || maxPrice) && (
+              <button
+                onClick={clearFilters}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-red-50 border-2 border-red-200 rounded-xl hover:bg-red-100 transition-all text-red-700 font-medium"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+                Temizle
+              </button>
+            )}
+          </div>
+
+          {showFilters && (
+            <div className="bg-white border-2 border-slate-200 rounded-xl p-4 space-y-4 animate-slideIn">
+              <h3 className="font-bold text-slate-900">Fiyat Aralığı</h3>
+              <div className="flex gap-3">
+                <input
+                  type="number"
+                  placeholder="Min"
+                  value={minPrice}
+                  onChange={(e) => setMinPrice(e.target.value)}
+                  className="flex-1 px-4 py-2 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 transition-all"
+                />
+                <input
+                  type="number"
+                  placeholder="Max"
+                  value={maxPrice}
+                  onChange={(e) => setMaxPrice(e.target.value)}
+                  className="flex-1 px-4 py-2 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 transition-all"
+                />
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
@@ -85,10 +173,10 @@ const ProductCatalog: React.FC = () => {
           <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-2">Ürün bulunamadı</h3>
           <p className="text-slate-500 mb-6 text-sm sm:text-base">Arama kriterlerinizi ayarlamayı deneyin</p>
           <button
-            onClick={() => setSearchTerm('')}
+            onClick={clearFilters}
             className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-colors text-sm sm:text-base"
           >
-            Aramayı Temizle
+            Filtreleri Temizle
           </button>
         </div>
       ) : (

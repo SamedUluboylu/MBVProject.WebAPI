@@ -3,11 +3,13 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { CartProvider } from './contexts/CartContext';
 import { ToastProvider } from './contexts/ToastContext';
+import { WishlistProvider } from './contexts/WishlistContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
 
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
 import AdminLayout from './components/admin/AdminLayout';
+import Dashboard from './components/admin/Dashboard';
 import ProductList from './components/admin/ProductList';
 import ProductForm from './components/admin/ProductForm';
 import OrderList from './components/admin/OrderList';
@@ -57,7 +59,7 @@ const AppRoutes: React.FC = () => {
           </ProtectedRoute>
         }
       >
-        <Route index element={<ProductList />} />
+        <Route index element={<Dashboard />} />
         <Route path="products" element={<ProductList />} />
         <Route path="products/new" element={<ProductForm />} />
         <Route path="orders" element={<OrderList />} />
@@ -72,9 +74,11 @@ const App: React.FC = () => {
     <BrowserRouter>
       <ToastProvider>
         <AuthProvider>
-          <CartProvider>
-            <AppRoutes />
-          </CartProvider>
+          <WishlistProvider>
+            <CartProvider>
+              <AppRoutes />
+            </CartProvider>
+          </WishlistProvider>
         </AuthProvider>
       </ToastProvider>
     </BrowserRouter>
