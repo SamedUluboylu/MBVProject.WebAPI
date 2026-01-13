@@ -17,7 +17,7 @@ const Home: React.FC = () => {
       title: 'Yeni Sezon Ürünleri',
       subtitle: 'En yeni trendleri keşfedin',
       cta: 'Hemen İncele',
-      bg: 'from-orange-600 to-orange-500',
+      bg: 'from-blue-600 to-blue-500',
       image: '🎉'
     },
     {
@@ -39,7 +39,7 @@ const Home: React.FC = () => {
   const categories = [
     { name: 'Elektronik', icon: '📱', bg: 'from-blue-500 to-blue-600' },
     { name: 'Giyim', icon: '👕', bg: 'from-green-500 to-green-600' },
-    { name: 'Ev & Bahçe', icon: '🏠', bg: 'from-orange-500 to-orange-600' },
+    { name: 'Ev & Bahçe', icon: '🏠', bg: 'from-blue-500 to-blue-600' },
     { name: 'Spor', icon: '⚽', bg: 'from-red-500 to-red-600' },
     { name: 'Kitap', icon: '📚', bg: 'from-purple-500 to-purple-600' },
     { name: 'Kozmetik', icon: '💄', bg: 'from-pink-500 to-pink-600' },
@@ -56,7 +56,7 @@ const Home: React.FC = () => {
       ),
       title: 'Ücretsiz Kargo',
       description: '500₺ ve üzeri siparişlerde',
-      color: 'from-orange-500 to-orange-600'
+      color: 'from-blue-500 to-blue-600'
     },
     {
       icon: (
@@ -131,7 +131,7 @@ const Home: React.FC = () => {
   return (
     <div className="bg-slate-50">
       <div className="max-w-[1600px] mx-auto px-4 lg:px-6 py-4 lg:py-6">
-        <div className="bg-gradient-to-r from-orange-600 to-orange-500 rounded-2xl overflow-hidden shadow-xl mb-6 relative">
+        <div className="bg-gradient-to-r from-blue-600 to-blue-500 rounded-2xl overflow-hidden shadow-xl mb-6 relative">
           <div className="relative h-[300px] lg:h-[400px]">
             {slides.map((slide, index) => (
               <div
@@ -152,7 +152,7 @@ const Home: React.FC = () => {
                       </p>
                       <button
                         onClick={() => navigate('/products')}
-                        className="bg-white text-orange-600 px-8 py-3 rounded-lg font-bold text-lg hover:bg-slate-50 transition-all shadow-lg hover:shadow-xl hover:scale-105 active:scale-95"
+                        className="bg-white text-blue-600 px-8 py-3 rounded-lg font-bold text-lg hover:bg-slate-50 transition-all shadow-lg hover:shadow-xl hover:scale-105 active:scale-95"
                       >
                         {slide.cta}
                       </button>
@@ -198,7 +198,7 @@ const Home: React.FC = () => {
             </div>
             <Link
               to="/products"
-              className="text-orange-600 hover:text-orange-700 font-semibold text-sm flex items-center gap-1 group"
+              className="text-blue-600 hover:text-blue-700 font-semibold text-sm flex items-center gap-1 group"
             >
               Tümünü Gör
               <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -211,7 +211,7 @@ const Home: React.FC = () => {
               <button
                 key={index}
                 onClick={() => navigate('/products')}
-                className="group bg-white rounded-xl p-3 lg:p-4 transition-all duration-300 hover:shadow-lg border border-slate-200 hover:border-orange-200"
+                className="group bg-white rounded-xl p-3 lg:p-4 transition-all duration-300 hover:shadow-lg border border-slate-200 hover:border-blue-200"
               >
                 <div className="flex flex-col items-center gap-2">
                   <div className={`w-12 h-12 lg:w-14 lg:h-14 rounded-xl bg-gradient-to-br ${category.bg} text-white flex items-center justify-center text-2xl lg:text-3xl group-hover:scale-110 transition-transform shadow-md`}>
@@ -234,7 +234,7 @@ const Home: React.FC = () => {
             </div>
             <Link
               to="/products"
-              className="text-orange-600 hover:text-orange-700 font-semibold text-sm flex items-center gap-1 group"
+              className="text-blue-600 hover:text-blue-700 font-semibold text-sm flex items-center gap-1 group"
             >
               Tüm Ürünler
               <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -259,10 +259,10 @@ const Home: React.FC = () => {
                 <Link
                   key={product.id}
                   to={`/product/${product.id}`}
-                  className="group bg-white rounded-xl hover:shadow-lg transition-all duration-300 overflow-hidden border border-slate-200 hover:border-orange-200 flex flex-col"
+                  className="group bg-white rounded-xl hover:shadow-lg transition-all duration-300 overflow-hidden border border-slate-200 hover:border-blue-200 flex flex-col"
                 >
                   <div className="aspect-square bg-gradient-to-br from-slate-50 to-slate-100 relative overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-br from-orange-500/5 to-orange-600/5 group-hover:scale-105 transition-transform duration-300"></div>
+                    <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-blue-600/5 group-hover:scale-105 transition-transform duration-300"></div>
                     <div className="absolute inset-0 flex items-center justify-center">
                       <svg className="w-16 h-16 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
@@ -283,13 +283,13 @@ const Home: React.FC = () => {
                         </span>
                       )}
                       {product.brandName && (
-                        <span className="text-[9px] text-orange-700 bg-orange-50 px-1.5 py-0.5 rounded font-medium">
+                        <span className="text-[9px] text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded font-medium">
                           {product.brandName}
                         </span>
                       )}
                     </div>
 
-                    <h3 className="font-semibold text-sm mb-2 text-slate-900 line-clamp-2 group-hover:text-orange-600 transition-colors min-h-[2.5rem] leading-tight">
+                    <h3 className="font-semibold text-sm mb-2 text-slate-900 line-clamp-2 group-hover:text-blue-600 transition-colors min-h-[2.5rem] leading-tight">
                       {product.name}
                     </h3>
 
@@ -307,7 +307,7 @@ const Home: React.FC = () => {
                       )}
 
                       <div className="flex items-baseline gap-1.5 mb-3">
-                        <span className="text-lg font-bold text-orange-600">
+                        <span className="text-lg font-bold text-blue-600">
                           ₺{product.price.toFixed(2)}
                         </span>
                         {product.compareAtPrice && (
@@ -322,7 +322,7 @@ const Home: React.FC = () => {
                         disabled={!product.inStock}
                         className={`w-full py-2 rounded-lg font-semibold text-xs transition-all ${
                           product.inStock
-                            ? 'bg-orange-600 text-white hover:bg-orange-700 active:scale-95 shadow-sm hover:shadow-md'
+                            ? 'bg-blue-600 text-white hover:bg-blue-700 active:scale-95 shadow-sm hover:shadow-md'
                             : 'bg-slate-100 text-slate-400 cursor-not-allowed'
                         }`}
                       >
@@ -336,7 +336,7 @@ const Home: React.FC = () => {
           )}
         </div>
 
-        <div className="mt-8 bg-gradient-to-r from-orange-600 to-orange-500 rounded-2xl overflow-hidden shadow-xl">
+        <div className="mt-8 bg-gradient-to-r from-blue-600 to-blue-500 rounded-2xl overflow-hidden shadow-xl">
           <div className="px-6 lg:px-12 py-12 lg:py-16 text-center">
             <h2 className="text-2xl lg:text-4xl font-bold text-white mb-3">
               Bültenimize Abone Olun

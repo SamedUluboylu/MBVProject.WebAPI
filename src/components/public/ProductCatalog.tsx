@@ -207,7 +207,7 @@ const ProductCatalog: React.FC = () => {
                       onClick={() => setPriceRange(range.min, range.max)}
                       className={`text-[10px] py-1.5 px-2 rounded font-medium transition-all ${
                         minPrice === range.min && maxPrice === range.max
-                          ? 'bg-orange-600 text-white shadow-sm'
+                          ? 'bg-blue-600 text-white shadow-sm'
                           : 'bg-slate-50 text-slate-600 hover:bg-slate-100'
                       }`}
                     >
@@ -222,14 +222,14 @@ const ProductCatalog: React.FC = () => {
                     placeholder="Min"
                     value={minPrice}
                     onChange={(e) => setMinPrice(e.target.value)}
-                    className="flex-1 px-2 py-1.5 border border-slate-200 rounded text-xs focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-100 transition-all"
+                    className="flex-1 px-2 py-1.5 border border-slate-200 rounded text-xs focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-100 transition-all"
                   />
                   <input
                     type="number"
                     placeholder="Max"
                     value={maxPrice}
                     onChange={(e) => setMaxPrice(e.target.value)}
-                    className="flex-1 px-2 py-1.5 border border-slate-200 rounded text-xs focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-100 transition-all"
+                    className="flex-1 px-2 py-1.5 border border-slate-200 rounded text-xs focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-100 transition-all"
                   />
                 </div>
               </div>
@@ -274,7 +274,7 @@ const ProductCatalog: React.FC = () => {
                         type="checkbox"
                         checked={selectedCategories.includes(category.id)}
                         onChange={() => toggleCategory(category.id)}
-                        className="w-4 h-4 text-orange-600 border-slate-300 rounded focus:ring-2 focus:ring-orange-500"
+                        className="w-4 h-4 text-blue-600 border-slate-300 rounded focus:ring-2 focus:ring-blue-500"
                       />
                       <span className="text-xs text-slate-700 group-hover:text-slate-900 flex-1">
                         {category.name}
@@ -293,12 +293,12 @@ const ProductCatalog: React.FC = () => {
                 className="w-full flex items-center justify-between p-2.5 hover:bg-slate-50 transition-colors"
               >
                 <div className="flex items-center gap-2 text-xs font-bold text-slate-900">
-                  <svg className="w-4 h-4 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
                   </svg>
                   Marka
                   {selectedBrands.length > 0 && (
-                    <span className="bg-orange-100 text-orange-700 text-[9px] font-bold px-1.5 py-0.5 rounded-full">
+                    <span className="bg-blue-100 text-blue-700 text-[9px] font-bold px-1.5 py-0.5 rounded-full">
                       {selectedBrands.length}
                     </span>
                   )}
@@ -324,7 +324,7 @@ const ProductCatalog: React.FC = () => {
                         type="checkbox"
                         checked={selectedBrands.includes(brand.id)}
                         onChange={() => toggleBrand(brand.id)}
-                        className="w-4 h-4 text-orange-600 border-slate-300 rounded focus:ring-2 focus:ring-orange-500"
+                        className="w-4 h-4 text-blue-600 border-slate-300 rounded focus:ring-2 focus:ring-blue-500"
                       />
                       <span className="text-xs text-slate-700 group-hover:text-slate-900 flex-1">
                         {brand.name}
@@ -376,7 +376,7 @@ const ProductCatalog: React.FC = () => {
               </svg>
               Filtrele
               {hasActiveFilters && (
-                <span className="bg-orange-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">
+                <span className="bg-blue-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">
                   {(selectedCategories.length + selectedBrands.length + (minPrice || maxPrice ? 1 : 0))}
                 </span>
               )}
@@ -390,7 +390,7 @@ const ProductCatalog: React.FC = () => {
                 placeholder="Ürün, kategori veya marka ara..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-3 py-1.5 pl-9 border border-slate-200 rounded-lg focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-100 text-sm transition-all"
+                className="w-full px-3 py-1.5 pl-9 border border-slate-200 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 text-sm transition-all"
               />
               <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -444,7 +444,7 @@ const ProductCatalog: React.FC = () => {
                 <p className="text-sm text-slate-500 mb-4">Arama kriterlerinizi değiştirerek tekrar deneyin</p>
                 <button
                   onClick={clearFilters}
-                  className="inline-flex items-center px-4 py-2 bg-orange-600 text-white rounded-lg text-sm font-semibold hover:bg-orange-700 transition-colors shadow-sm hover:shadow-md"
+                  className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors shadow-sm hover:shadow-md"
                 >
                   Filtreleri Temizle
                 </button>
@@ -456,7 +456,7 @@ const ProductCatalog: React.FC = () => {
                     <Link
                       key={product.id}
                       to={`/product/${product.id}`}
-                      className="group bg-white rounded-lg hover:shadow-md transition-all duration-200 overflow-hidden border border-slate-200 hover:border-orange-300 flex flex-col"
+                      className="group bg-white rounded-lg hover:shadow-md transition-all duration-200 overflow-hidden border border-slate-200 hover:border-blue-300 flex flex-col"
                     >
                       <div className="aspect-square bg-gradient-to-br from-slate-50 to-slate-100 relative overflow-hidden">
                         <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-cyan-500/5 group-hover:scale-105 transition-transform duration-300"></div>
@@ -485,13 +485,13 @@ const ProductCatalog: React.FC = () => {
                             </span>
                           )}
                           {product.brandName && (
-                            <span className="inline-block text-[8px] text-orange-700 bg-orange-50 px-1 py-0.5 rounded font-medium">
+                            <span className="inline-block text-[8px] text-blue-700 bg-blue-50 px-1 py-0.5 rounded font-medium">
                               {product.brandName}
                             </span>
                           )}
                         </div>
 
-                        <h3 className="font-semibold text-[11px] sm:text-xs mb-1.5 text-slate-900 line-clamp-2 group-hover:text-orange-600 transition-colors min-h-[2rem] leading-tight">
+                        <h3 className="font-semibold text-[11px] sm:text-xs mb-1.5 text-slate-900 line-clamp-2 group-hover:text-blue-600 transition-colors min-h-[2rem] leading-tight">
                           {product.name}
                         </h3>
 
@@ -509,7 +509,7 @@ const ProductCatalog: React.FC = () => {
                           )}
 
                           <div className="flex items-baseline gap-1 mb-1.5">
-                            <span className="text-sm sm:text-base font-bold text-orange-600">
+                            <span className="text-sm sm:text-base font-bold text-blue-600">
                               ₺{product.price.toFixed(2)}
                             </span>
                             {product.compareAtPrice && (
@@ -524,7 +524,7 @@ const ProductCatalog: React.FC = () => {
                             disabled={!product.inStock}
                             className={`w-full py-1.5 rounded font-semibold text-[10px] transition-all ${
                               product.inStock
-                                ? 'bg-orange-600 text-white hover:bg-orange-700 active:scale-95 shadow-sm hover:shadow-md'
+                                ? 'bg-blue-600 text-white hover:bg-blue-700 active:scale-95 shadow-sm hover:shadow-md'
                                 : 'bg-slate-100 text-slate-400 cursor-not-allowed'
                             }`}
                           >
@@ -541,7 +541,7 @@ const ProductCatalog: React.FC = () => {
                     <button
                       onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                       disabled={currentPage === 1}
-                      className="px-3 py-1.5 border border-slate-200 rounded text-xs font-medium disabled:opacity-40 disabled:cursor-not-allowed hover:border-orange-500 hover:bg-orange-50 transition-all"
+                      className="px-3 py-1.5 border border-slate-200 rounded text-xs font-medium disabled:opacity-40 disabled:cursor-not-allowed hover:border-blue-500 hover:bg-blue-50 transition-all"
                     >
                       Önceki
                     </button>
@@ -563,7 +563,7 @@ const ProductCatalog: React.FC = () => {
                             onClick={() => setCurrentPage(page)}
                             className={`w-8 h-8 rounded font-semibold text-xs transition-all ${
                               currentPage === page
-                                ? 'bg-orange-600 text-white shadow-sm'
+                                ? 'bg-blue-600 text-white shadow-sm'
                                 : 'bg-slate-50 text-slate-600 hover:bg-slate-100'
                             }`}
                           >
@@ -575,7 +575,7 @@ const ProductCatalog: React.FC = () => {
                     <button
                       onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                       disabled={currentPage === totalPages}
-                      className="px-3 py-1.5 border border-slate-200 rounded text-xs font-medium disabled:opacity-40 disabled:cursor-not-allowed hover:border-orange-500 hover:bg-orange-50 transition-all"
+                      className="px-3 py-1.5 border border-slate-200 rounded text-xs font-medium disabled:opacity-40 disabled:cursor-not-allowed hover:border-blue-500 hover:bg-blue-50 transition-all"
                     >
                       Sonraki
                     </button>
