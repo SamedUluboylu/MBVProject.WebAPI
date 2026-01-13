@@ -1,10 +1,25 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { apiService } from '../services/api';
 
 interface User {
   id: string;
   email: string;
   name: string;
-  role: string;
+  roles: string[];
+}
+
+interface AuthResponse {
+  success: boolean;
+  data?: {
+    userId: string;
+    email: string;
+    userName: string;
+    roles: string[];
+    accessToken: string;
+    refreshToken: string;
+    expiresAt: string;
+  };
+  message?: string;
 }
 
 interface AuthContextType {
@@ -27,28 +42,49 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const storedUser = localStorage.getItem('user');
 
     if (token && storedUser) {
-      setUser(JSON.parse(storedUser));
+      try {
+        const parsedUser = JSON.parse(storedUser);
+        setUser(parsedUser);
+      } catch (error) {
+        console.error('Error parsing stored user:', error);
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+      }
     }
     setLoading(false);
   }, []);
 
   const login = async (email: string, password: string) => {
-    const mockUser: User = {
-      id: '1',
-      email,
-      name: email.split('@')[0],
-      role: email.includes('admin') ? 'Admin' : 'Customer',
-    };
+    try {
+      const response = await apiService.post<AuthResponse>('/api/Auth/login', {
+        email,
+        password,
+      });
 
-    const mockToken = 'mock-jwt-token-' + Date.now();
+      if (response.success && response.data) {
+        const userData: User = {
+          id: response.data.userId,
+          email: response.data.email,
+          name: response.data.userName,
+          roles: response.data.roles,
+        };
 
-    localStorage.setItem('token', mockToken);
-    localStorage.setItem('user', JSON.stringify(mockUser));
-    setUser(mockUser);
+        localStorage.setItem('token', response.data.accessToken);
+        localStorage.setItem('refreshToken', response.data.refreshToken);
+        localStorage.setItem('user', JSON.stringify(userData));
+        setUser(userData);
+      } else {
+        throw new Error(response.message || 'Giriş başarısız');
+      }
+    } catch (error: any) {
+      console.error('Login error:', error);
+      throw new Error(error.response?.data?.message || 'Giriş başarısız');
+    }
   };
 
   const logout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('refreshToken');
     localStorage.removeItem('user');
     setUser(null);
   };
@@ -56,7 +92,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const value: AuthContextType = {
     user,
     isAuthenticated: !!user,
-    isAdmin: user?.role === 'Admin',
+    isAdmin: user?.roles?.includes('Admin') || false,
     login,
     logout,
     loading,

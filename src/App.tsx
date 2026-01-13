@@ -1,7 +1,8 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { AuthProvider } from './contexts/AuthContext';
 import { CartProvider } from './contexts/CartContext';
+import { ProtectedRoute } from './components/ProtectedRoute';
 
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
@@ -18,27 +19,6 @@ import Cart from './components/public/Cart';
 import Checkout from './components/public/Checkout';
 import OrderSuccess from './components/public/OrderSuccess';
 import Profile from './components/public/Profile';
-
-const ProtectedRoute: React.FC<{ children: React.ReactNode; adminOnly?: boolean }> = ({
-  children,
-  adminOnly = false,
-}) => {
-  const { isAuthenticated, isAdmin, loading } = useAuth();
-
-  if (loading) {
-    return <div className="flex justify-center items-center h-screen">Loading...</div>;
-  }
-
-  if (!isAuthenticated) {
-    return <Navigate to="/login" />;
-  }
-
-  if (adminOnly && !isAdmin) {
-    return <Navigate to="/" />;
-  }
-
-  return <>{children}</>;
-};
 
 const AppRoutes: React.FC = () => {
   return (
@@ -71,7 +51,7 @@ const AppRoutes: React.FC = () => {
       <Route
         path="/admin"
         element={
-          <ProtectedRoute adminOnly>
+          <ProtectedRoute requireAdmin>
             <AdminLayout />
           </ProtectedRoute>
         }
