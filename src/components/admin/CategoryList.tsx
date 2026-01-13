@@ -11,10 +11,10 @@ interface Category {
 
 const CategoryList: React.FC = () => {
   const [categories] = useState<Category[]>([
-    { id: '1', name: 'Electronics', slug: 'electronics', productCount: 45 },
-    { id: '2', name: 'Clothing', slug: 'clothing', productCount: 78 },
-    { id: '3', name: 'Home & Garden', slug: 'home-garden', productCount: 32 },
-    { id: '4', name: 'Sports', slug: 'sports', productCount: 23 },
+    { id: '1', name: 'Elektronik', slug: 'elektronik', productCount: 45 },
+    { id: '2', name: 'Giyim', slug: 'giyim', productCount: 78 },
+    { id: '3', name: 'Ev & Bahçe', slug: 'ev-bahce', productCount: 32 },
+    { id: '4', name: 'Spor', slug: 'spor', productCount: 23 },
   ]);
 
   const [showModal, setShowModal] = useState(false);
@@ -32,12 +32,12 @@ const CategoryList: React.FC = () => {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Categories</h1>
+        <h1 className="text-3xl font-bold">Kategoriler</h1>
         <button
           onClick={() => setShowModal(true)}
           className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
         >
-          Add Category
+          Kategori Ekle
         </button>
       </div>
 
@@ -46,16 +46,16 @@ const CategoryList: React.FC = () => {
           <thead className="bg-gray-50">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                Name
+                Ad
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                 Slug
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                Products
+                Ürün Sayısı
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                Actions
+                İşlemler
               </th>
             </tr>
           </thead>
@@ -66,8 +66,8 @@ const CategoryList: React.FC = () => {
                 <td className="px-6 py-4 text-sm text-gray-600">{category.slug}</td>
                 <td className="px-6 py-4 text-sm">{category.productCount}</td>
                 <td className="px-6 py-4 text-sm space-x-2">
-                  <button className="text-blue-600 hover:text-blue-800">Edit</button>
-                  <button className="text-red-600 hover:text-red-800">Delete</button>
+                  <button className="text-blue-600 hover:text-blue-800">Düzenle</button>
+                  <button className="text-red-600 hover:text-red-800">Sil</button>
                 </td>
               </tr>
             ))}
@@ -78,10 +78,10 @@ const CategoryList: React.FC = () => {
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-8 max-w-md w-full">
-            <h2 className="text-2xl font-bold mb-4">Add Category</h2>
+            <h2 className="text-2xl font-bold mb-4">Kategori Ekle</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-1">Name</label>
+                <label className="block text-sm font-medium mb-1">Ad</label>
                 <input
                   type="text"
                   required
@@ -101,7 +101,7 @@ const CategoryList: React.FC = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">Description</label>
+                <label className="block text-sm font-medium mb-1">Açıklama</label>
                 <textarea
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
@@ -114,14 +114,14 @@ const CategoryList: React.FC = () => {
                   type="submit"
                   className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
                 >
-                  Create
+                  Oluştur
                 </button>
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
                   className="flex-1 border border-gray-300 py-2 rounded-lg hover:bg-gray-50"
                 >
-                  Cancel
+                  İptal
                 </button>
               </div>
             </form>

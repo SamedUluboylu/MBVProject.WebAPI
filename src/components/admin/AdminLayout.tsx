@@ -18,17 +18,17 @@ const AdminLayout: React.FC = () => {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-8">
               <Link to="/admin" className="text-xl font-bold">
-                Admin Dashboard
+                Yönetici Paneli
               </Link>
               <div className="flex space-x-4">
                 <Link to="/admin/products" className="hover:bg-gray-800 px-3 py-2 rounded">
-                  Products
+                  Ürünler
                 </Link>
                 <Link to="/admin/orders" className="hover:bg-gray-800 px-3 py-2 rounded">
-                  Orders
+                  Siparişler
                 </Link>
                 <Link to="/admin/categories" className="hover:bg-gray-800 px-3 py-2 rounded">
-                  Categories
+                  Kategoriler
                 </Link>
               </div>
             </div>
@@ -38,7 +38,7 @@ const AdminLayout: React.FC = () => {
                 onClick={handleLogout}
                 className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded text-sm"
               >
-                Logout
+                Çıkış
               </button>
             </div>
           </div>

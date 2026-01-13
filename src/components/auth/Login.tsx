@@ -23,7 +23,7 @@ const Login: React.FC = () => {
         navigate('/');
       }
     } catch (err) {
-      setError('Invalid email or password');
+      setError('Geçersiz e-posta veya şifre');
     } finally {
       setLoading(false);
     }
@@ -40,10 +40,10 @@ const Login: React.FC = () => {
               </svg>
             </div>
             <h2 className="text-3xl font-bold text-slate-900 mb-2">
-              Welcome Back
+              Hoş Geldiniz
             </h2>
             <p className="text-slate-600">
-              Sign in to continue shopping
+              Alışverişe devam etmek için giriş yapın
             </p>
           </div>
 
@@ -59,7 +59,7 @@ const Login: React.FC = () => {
 
             <div>
               <label htmlFor="email" className="block text-sm font-semibold text-slate-700 mb-2">
-                Email Address
+                E-posta Adresi
               </label>
               <input
                 id="email"
@@ -68,13 +68,13 @@ const Login: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all placeholder-slate-400"
-                placeholder="you@example.com"
+                placeholder="ornek@email.com"
               />
             </div>
 
             <div>
               <label htmlFor="password" className="block text-sm font-semibold text-slate-700 mb-2">
-                Password
+                Şifre
               </label>
               <input
                 id="password"
@@ -83,7 +83,7 @@ const Login: React.FC = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all placeholder-slate-400"
-                placeholder="Enter your password"
+                placeholder="Şifrenizi girin"
               />
             </div>
 
@@ -93,10 +93,10 @@ const Login: React.FC = () => {
                   type="checkbox"
                   className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-2 focus:ring-blue-200"
                 />
-                <span className="text-slate-600 group-hover:text-slate-900">Remember me</span>
+                <span className="text-slate-600 group-hover:text-slate-900">Beni hatırla</span>
               </label>
               <a href="#" className="text-blue-600 hover:text-blue-700 font-medium">
-                Forgot password?
+                Şifremi unuttum
               </a>
             </div>
 
@@ -108,27 +108,27 @@ const Login: React.FC = () => {
               {loading ? (
                 <>
                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  <span>Signing in...</span>
+                  <span>Giriş yapılıyor...</span>
                 </>
               ) : (
-                <span>Sign In</span>
+                <span>Giriş Yap</span>
               )}
             </button>
           </form>
 
           <div className="mt-6 text-center">
             <p className="text-slate-600">
-              Don't have an account?{' '}
+              Hesabınız yok mu?{' '}
               <Link to="/register" className="text-blue-600 hover:text-blue-700 font-semibold">
-                Sign up
+                Kayıt ol
               </Link>
             </p>
           </div>
 
           <div className="mt-6 pt-6 border-t border-slate-200">
             <p className="text-xs text-center text-slate-500">
-              For demo purposes, use{' '}
-              <span className="font-mono bg-slate-100 px-2 py-1 rounded">admin@example.com</span>
+              Demo için{' '}
+              <span className="font-mono bg-slate-100 px-2 py-1 rounded">admin@example.com</span> kullanın
             </p>
           </div>
         </div>

@@ -19,12 +19,12 @@ const Register: React.FC = () => {
     setError('');
 
     if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
+      setError('Şifreler eşleşmiyor');
       return;
     }
 
     if (formData.password.length < 6) {
-      setError('Password must be at least 6 characters');
+      setError('Şifre en az 6 karakter olmalıdır');
       return;
     }
 
@@ -33,7 +33,7 @@ const Register: React.FC = () => {
       await login(formData.email, formData.password);
       navigate('/');
     } catch (err) {
-      setError('Registration failed. Please try again.');
+      setError('Kayıt başarısız. Lütfen tekrar deneyin.');
     } finally {
       setLoading(false);
     }
@@ -54,10 +54,10 @@ const Register: React.FC = () => {
               </svg>
             </div>
             <h2 className="text-3xl font-bold text-slate-900 mb-2">
-              Create Account
+              Hesap Oluştur
             </h2>
             <p className="text-slate-600">
-              Start your shopping journey with us
+              Alışveriş yolculuğunuza bizimle başlayın
             </p>
           </div>
 
@@ -73,7 +73,7 @@ const Register: React.FC = () => {
 
             <div>
               <label htmlFor="name" className="block text-sm font-semibold text-slate-700 mb-2">
-                Full Name
+                Ad Soyad
               </label>
               <input
                 id="name"
@@ -83,13 +83,13 @@ const Register: React.FC = () => {
                 value={formData.name}
                 onChange={handleChange}
                 className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all placeholder-slate-400"
-                placeholder="John Doe"
+                placeholder="Ahmet Yılmaz"
               />
             </div>
 
             <div>
               <label htmlFor="email" className="block text-sm font-semibold text-slate-700 mb-2">
-                Email Address
+                E-posta Adresi
               </label>
               <input
                 id="email"
@@ -99,13 +99,13 @@ const Register: React.FC = () => {
                 value={formData.email}
                 onChange={handleChange}
                 className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all placeholder-slate-400"
-                placeholder="you@example.com"
+                placeholder="ornek@email.com"
               />
             </div>
 
             <div>
               <label htmlFor="password" className="block text-sm font-semibold text-slate-700 mb-2">
-                Password
+                Şifre
               </label>
               <input
                 id="password"
@@ -115,13 +115,13 @@ const Register: React.FC = () => {
                 value={formData.password}
                 onChange={handleChange}
                 className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all placeholder-slate-400"
-                placeholder="Create a strong password"
+                placeholder="Güçlü bir şifre oluşturun"
               />
             </div>
 
             <div>
               <label htmlFor="confirmPassword" className="block text-sm font-semibold text-slate-700 mb-2">
-                Confirm Password
+                Şifre Tekrar
               </label>
               <input
                 id="confirmPassword"
@@ -131,7 +131,7 @@ const Register: React.FC = () => {
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all placeholder-slate-400"
-                placeholder="Re-enter your password"
+                placeholder="Şifrenizi tekrar girin"
               />
             </div>
 
@@ -143,19 +143,19 @@ const Register: React.FC = () => {
               {loading ? (
                 <>
                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  <span>Creating account...</span>
+                  <span>Hesap oluşturuluyor...</span>
                 </>
               ) : (
-                <span>Create Account</span>
+                <span>Hesap Oluştur</span>
               )}
             </button>
           </form>
 
           <div className="mt-6 text-center">
             <p className="text-slate-600">
-              Already have an account?{' '}
+              Zaten hesabınız var mı?{' '}
               <Link to="/login" className="text-blue-600 hover:text-blue-700 font-semibold">
-                Sign in
+                Giriş yap
               </Link>
             </p>
           </div>

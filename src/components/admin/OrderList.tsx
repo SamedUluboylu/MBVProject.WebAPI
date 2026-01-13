@@ -14,8 +14,8 @@ const OrderList: React.FC = () => {
   const [orders] = useState<Order[]>([
     {
       id: '1',
-      orderNumber: 'ORD-20240113-ABC123',
-      customerEmail: 'customer@example.com',
+      orderNumber: 'SIP-20240113-ABC123',
+      customerEmail: 'musteri@example.com',
       status: 3,
       totalAmount: 299.99,
       createdAt: '2024-01-13T10:30:00',
@@ -23,8 +23,8 @@ const OrderList: React.FC = () => {
     },
     {
       id: '2',
-      orderNumber: 'ORD-20240113-XYZ789',
-      customerEmail: 'john@example.com',
+      orderNumber: 'SIP-20240113-XYZ789',
+      customerEmail: 'ahmet@example.com',
       status: 2,
       totalAmount: 149.99,
       createdAt: '2024-01-13T09:15:00',
@@ -36,14 +36,14 @@ const OrderList: React.FC = () => {
 
   const getStatusBadge = (status: number) => {
     const statuses = [
-      { label: 'Pending', color: 'gray' },
-      { label: 'Confirmed', color: 'blue' },
-      { label: 'Processing', color: 'yellow' },
-      { label: 'Shipped', color: 'indigo' },
-      { label: 'Delivered', color: 'green' },
-      { label: 'Cancelled', color: 'red' },
-      { label: 'Refunded', color: 'purple' },
-      { label: 'Failed', color: 'red' },
+      { label: 'Beklemede', color: 'gray' },
+      { label: 'Onaylandı', color: 'blue' },
+      { label: 'Hazırlanıyor', color: 'yellow' },
+      { label: 'Kargoya Verildi', color: 'indigo' },
+      { label: 'Teslim Edildi', color: 'green' },
+      { label: 'İptal Edildi', color: 'red' },
+      { label: 'İade Edildi', color: 'purple' },
+      { label: 'Başarısız', color: 'red' },
     ];
     const { label, color } = statuses[status] || statuses[0];
     return (
@@ -56,13 +56,13 @@ const OrderList: React.FC = () => {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Orders</h1>
+        <h1 className="text-3xl font-bold">Siparişler</h1>
       </div>
 
       <div className="bg-white rounded-lg shadow mb-6 p-4">
         <input
           type="text"
-          placeholder="Search orders by number or email..."
+          placeholder="Sipariş numarası veya e-posta ile ara..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="w-full px-4 py-2 border rounded"
@@ -74,25 +74,25 @@ const OrderList: React.FC = () => {
           <thead className="bg-gray-50">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                Order Number
+                Sipariş No
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                Customer
+                Müşteri
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                Items
+                Ürün Sayısı
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                Total
+                Toplam
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                Status
+                Durum
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                Date
+                Tarih
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                Actions
+                İşlemler
               </th>
             </tr>
           </thead>
@@ -103,15 +103,15 @@ const OrderList: React.FC = () => {
                 <td className="px-6 py-4 text-sm">{order.customerEmail}</td>
                 <td className="px-6 py-4 text-sm">{order.itemCount}</td>
                 <td className="px-6 py-4 text-sm font-semibold">
-                  ${order.totalAmount.toFixed(2)}
+                  ₺{order.totalAmount.toFixed(2)}
                 </td>
                 <td className="px-6 py-4">{getStatusBadge(order.status)}</td>
                 <td className="px-6 py-4 text-sm">
-                  {new Date(order.createdAt).toLocaleDateString()}
+                  {new Date(order.createdAt).toLocaleDateString('tr-TR')}
                 </td>
                 <td className="px-6 py-4 text-sm space-x-2">
-                  <button className="text-blue-600 hover:text-blue-800">View</button>
-                  <button className="text-green-600 hover:text-green-800">Update Status</button>
+                  <button className="text-blue-600 hover:text-blue-800">Görüntüle</button>
+                  <button className="text-green-600 hover:text-green-800">Durumu Güncelle</button>
                 </td>
               </tr>
             ))}

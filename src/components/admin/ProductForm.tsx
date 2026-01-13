@@ -54,7 +54,7 @@ const ProductForm: React.FC = () => {
       });
       navigate('/admin/products');
     } catch (err) {
-      setError('Failed to create product. Please try again.');
+      setError('Ürün oluşturulamadı. Lütfen tekrar deneyin.');
     } finally {
       setLoading(false);
     }
@@ -67,11 +67,11 @@ const ProductForm: React.FC = () => {
           onClick={() => navigate('/admin/products')}
           className="text-blue-600 hover:text-blue-800 flex items-center"
         >
-          ← Back to Products
+          ← Ürünlere Dön
         </button>
       </div>
 
-      <h1 className="text-3xl font-bold mb-8">Create New Product</h1>
+      <h1 className="text-3xl font-bold mb-8">Yeni Ürün Oluştur</h1>
 
       {error && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
@@ -81,10 +81,10 @@ const ProductForm: React.FC = () => {
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-xl font-bold mb-4">Basic Information</h2>
+          <h2 className="text-xl font-bold mb-4">Temel Bilgiler</h2>
           <div className="grid grid-cols-2 gap-4">
             <div className="col-span-2">
-              <label className="block text-sm font-medium mb-1">Product Name *</label>
+              <label className="block text-sm font-medium mb-1">Ürün Adı *</label>
               <input
                 type="text"
                 name="name"
@@ -106,7 +106,7 @@ const ProductForm: React.FC = () => {
               />
             </div>
             <div className="col-span-2">
-              <label className="block text-sm font-medium mb-1">Description *</label>
+              <label className="block text-sm font-medium mb-1">Açıklama *</label>
               <textarea
                 name="description"
                 required
@@ -117,7 +117,7 @@ const ProductForm: React.FC = () => {
               />
             </div>
             <div className="col-span-2">
-              <label className="block text-sm font-medium mb-1">Short Description</label>
+              <label className="block text-sm font-medium mb-1">Kısa Açıklama</label>
               <textarea
                 name="shortDescription"
                 value={formData.shortDescription}
@@ -130,10 +130,10 @@ const ProductForm: React.FC = () => {
         </div>
 
         <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-xl font-bold mb-4">Pricing & Inventory</h2>
+          <h2 className="text-xl font-bold mb-4">Fiyatlandırma & Envanter</h2>
           <div className="grid grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm font-medium mb-1">Price *</label>
+              <label className="block text-sm font-medium mb-1">Fiyat *</label>
               <input
                 type="number"
                 name="price"
@@ -145,7 +145,7 @@ const ProductForm: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">Compare At Price</label>
+              <label className="block text-sm font-medium mb-1">Karşılaştırma Fiyatı</label>
               <input
                 type="number"
                 name="compareAtPrice"
@@ -156,7 +156,7 @@ const ProductForm: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">Cost *</label>
+              <label className="block text-sm font-medium mb-1">Maliyet *</label>
               <input
                 type="number"
                 name="cost"
@@ -168,7 +168,7 @@ const ProductForm: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">Stock Quantity *</label>
+              <label className="block text-sm font-medium mb-1">Stok Miktarı *</label>
               <input
                 type="number"
                 name="stockQuantity"
@@ -190,7 +190,7 @@ const ProductForm: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">Barcode</label>
+              <label className="block text-sm font-medium mb-1">Barkod</label>
               <input
                 type="text"
                 name="barcode"
@@ -203,10 +203,10 @@ const ProductForm: React.FC = () => {
         </div>
 
         <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-xl font-bold mb-4">Organization</h2>
+          <h2 className="text-xl font-bold mb-4">Organizasyon</h2>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium mb-1">Category ID *</label>
+              <label className="block text-sm font-medium mb-1">Kategori ID *</label>
               <input
                 type="text"
                 name="categoryId"
@@ -217,7 +217,7 @@ const ProductForm: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">Brand ID *</label>
+              <label className="block text-sm font-medium mb-1">Marka ID *</label>
               <input
                 type="text"
                 name="brandId"
@@ -228,16 +228,16 @@ const ProductForm: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">Status</label>
+              <label className="block text-sm font-medium mb-1">Durum</label>
               <select
                 name="status"
                 value={formData.status}
                 onChange={handleChange}
                 className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
               >
-                <option value={0}>Draft</option>
-                <option value={1}>Active</option>
-                <option value={2}>Passive</option>
+                <option value={0}>Taslak</option>
+                <option value={1}>Aktif</option>
+                <option value={2}>Pasif</option>
               </select>
             </div>
             <div className="flex items-center space-x-4">
@@ -249,7 +249,7 @@ const ProductForm: React.FC = () => {
                   onChange={handleChange}
                   className="mr-2"
                 />
-                Featured
+                Öne Çıkan
               </label>
               <label className="flex items-center">
                 <input
@@ -259,17 +259,17 @@ const ProductForm: React.FC = () => {
                   onChange={handleChange}
                   className="mr-2"
                 />
-                Allow Backorder
+                Ön Sipariş İzni
               </label>
             </div>
           </div>
         </div>
 
         <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-xl font-bold mb-4">Shipping</h2>
+          <h2 className="text-xl font-bold mb-4">Kargo</h2>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium mb-1">Weight (kg) *</label>
+              <label className="block text-sm font-medium mb-1">Ağırlık (kg) *</label>
               <input
                 type="number"
                 name="weight"
@@ -281,13 +281,13 @@ const ProductForm: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">Dimensions</label>
+              <label className="block text-sm font-medium mb-1">Boyutlar</label>
               <input
                 type="text"
                 name="dimensions"
                 value={formData.dimensions}
                 onChange={handleChange}
-                placeholder="L x W x H"
+                placeholder="U x G x Y"
                 className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
               />
             </div>
@@ -300,14 +300,14 @@ const ProductForm: React.FC = () => {
             disabled={loading}
             className="flex-1 bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 font-medium disabled:opacity-50"
           >
-            {loading ? 'Creating...' : 'Create Product'}
+            {loading ? 'Oluşturuluyor...' : 'Ürün Oluştur'}
           </button>
           <button
             type="button"
             onClick={() => navigate('/admin/products')}
             className="px-8 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 font-medium"
           >
-            Cancel
+            İptal
           </button>
         </div>
       </form>

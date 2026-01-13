@@ -30,7 +30,7 @@ const ProductList: React.FC = () => {
   }, [currentPage, searchTerm]);
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this product?')) return;
+    if (!confirm('Bu ürünü silmek istediğinizden emin misiniz?')) return;
 
     try {
       await adminApi.products.delete(id);
@@ -41,7 +41,7 @@ const ProductList: React.FC = () => {
   };
 
   const getStatusBadge = (status: number) => {
-    const statuses = ['Draft', 'Active', 'Passive', 'Out of Stock', 'Discontinued'];
+    const statuses = ['Taslak', 'Aktif', 'Pasif', 'Stokta Yok', 'Üretim Durduruldu'];
     const colors = ['gray', 'green', 'yellow', 'red', 'red'];
     return (
       <span className={`px-2 py-1 text-xs rounded bg-${colors[status]}-100 text-${colors[status]}-800`}>
@@ -53,7 +53,7 @@ const ProductList: React.FC = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <div className="text-xl">Loading products...</div>
+        <div className="text-xl">Ürünler yükleniyor...</div>
       </div>
     );
   }
@@ -61,16 +61,16 @@ const ProductList: React.FC = () => {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Products</h1>
+        <h1 className="text-3xl font-bold">Ürünler</h1>
         <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-          Add Product
+          Ürün Ekle
         </button>
       </div>
 
       <div className="bg-white rounded-lg shadow mb-6 p-4">
         <input
           type="text"
-          placeholder="Search products..."
+          placeholder="Ürün ara..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="w-full px-4 py-2 border rounded"
@@ -82,22 +82,22 @@ const ProductList: React.FC = () => {
           <thead className="bg-gray-50">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                Name
+                Ürün Adı
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                 SKU
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                Price
+                Fiyat
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                Stock
+                Stok
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                Status
+                Durum
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                Actions
+                İşlemler
               </th>
             </tr>
           </thead>
@@ -110,22 +110,22 @@ const ProductList: React.FC = () => {
                 </td>
                 <td className="px-6 py-4 text-sm">{product.sku}</td>
                 <td className="px-6 py-4 text-sm">
-                  ${product.price.toFixed(2)}
+                  ₺{product.price.toFixed(2)}
                   {product.compareAtPrice && (
                     <div className="text-xs text-gray-500 line-through">
-                      ${product.compareAtPrice.toFixed(2)}
+                      ₺{product.compareAtPrice.toFixed(2)}
                     </div>
                   )}
                 </td>
                 <td className="px-6 py-4 text-sm">{product.stockQuantity}</td>
                 <td className="px-6 py-4">{getStatusBadge(product.status)}</td>
                 <td className="px-6 py-4 text-sm space-x-2">
-                  <button className="text-blue-600 hover:text-blue-800">Edit</button>
+                  <button className="text-blue-600 hover:text-blue-800">Düzenle</button>
                   <button
                     onClick={() => handleDelete(product.id)}
                     className="text-red-600 hover:text-red-800"
                   >
-                    Delete
+                    Sil
                   </button>
                 </td>
               </tr>
@@ -140,17 +140,17 @@ const ProductList: React.FC = () => {
           disabled={currentPage === 1}
           className="px-4 py-2 border rounded disabled:opacity-50"
         >
-          Previous
+          Önceki
         </button>
         <span className="px-4 py-2">
-          Page {currentPage} of {totalPages}
+          Sayfa {currentPage} / {totalPages}
         </span>
         <button
           onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
           disabled={currentPage === totalPages}
           className="px-4 py-2 border rounded disabled:opacity-50"
         >
-          Next
+          Sonraki
         </button>
       </div>
     </div>

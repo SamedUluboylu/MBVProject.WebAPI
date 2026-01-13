@@ -14,9 +14,9 @@ const Cart: React.FC = () => {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
           </svg>
         </div>
-        <h1 className="text-3xl font-bold mb-3 text-slate-900">Your Cart is Empty</h1>
+        <h1 className="text-3xl font-bold mb-3 text-slate-900">Sepetiniz Boş</h1>
         <p className="text-slate-600 mb-8 max-w-md mx-auto">
-          Looks like you haven't added any items to your cart yet. Start shopping to fill it up!
+          Henüz sepetinize ürün eklemediniz. Alışverişe başlayın!
         </p>
         <button
           onClick={() => navigate('/products')}
@@ -25,7 +25,7 @@ const Cart: React.FC = () => {
           <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
           </svg>
-          Start Shopping
+          Alışverişe Başla
         </button>
       </div>
     );
@@ -35,8 +35,8 @@ const Cart: React.FC = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl md:text-4xl font-bold text-slate-900">Shopping Cart</h1>
-          <p className="text-slate-600 mt-1">{items.length} {items.length === 1 ? 'item' : 'items'} in your cart</p>
+          <h1 className="text-3xl md:text-4xl font-bold text-slate-900">Alışveriş Sepetim</h1>
+          <p className="text-slate-600 mt-1">Sepetinizde {items.length} ürün var</p>
         </div>
         <button
           onClick={clearCart}
@@ -45,7 +45,7 @@ const Cart: React.FC = () => {
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
           </svg>
-          Clear Cart
+          Sepeti Temizle
         </button>
       </div>
 
@@ -64,12 +64,12 @@ const Cart: React.FC = () => {
                   <div className="flex items-start justify-between gap-4 mb-4">
                     <div className="flex-1 min-w-0">
                       <h3 className="font-bold text-lg text-slate-900 mb-1">{item.name}</h3>
-                      <p className="text-slate-600">${item.price.toFixed(2)} each</p>
+                      <p className="text-slate-600">₺{item.price.toFixed(2)} / adet</p>
                     </div>
                     <button
                       onClick={() => removeFromCart(item.productId)}
                       className="text-red-600 hover:text-red-700 p-2 hover:bg-red-50 rounded-lg transition-colors flex-shrink-0"
-                      title="Remove item"
+                      title="Ürünü kaldır"
                     >
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -96,9 +96,9 @@ const Cart: React.FC = () => {
                       </button>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm text-slate-600 mb-1">Item Total</p>
+                      <p className="text-sm text-slate-600 mb-1">Toplam</p>
                       <p className="text-2xl font-bold text-slate-900">
-                        ${(item.price * item.quantity).toFixed(2)}
+                        ₺{(item.price * item.quantity).toFixed(2)}
                       </p>
                     </div>
                   </div>
@@ -110,26 +110,26 @@ const Cart: React.FC = () => {
 
         <div className="lg:col-span-1">
           <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sticky top-24">
-            <h2 className="text-xl font-bold mb-6 text-slate-900">Order Summary</h2>
+            <h2 className="text-xl font-bold mb-6 text-slate-900">Sipariş Özeti</h2>
 
             <div className="space-y-4 mb-6 pb-6 border-b border-slate-200">
               <div className="flex justify-between text-slate-600">
-                <span>Subtotal</span>
-                <span className="font-semibold">${totalAmount.toFixed(2)}</span>
+                <span>Ara Toplam</span>
+                <span className="font-semibold">₺{totalAmount.toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-slate-600">
-                <span>Shipping</span>
-                <span className="font-semibold text-green-600">FREE</span>
+                <span>Kargo</span>
+                <span className="font-semibold text-green-600">ÜCRETSİZ</span>
               </div>
               <div className="flex justify-between text-slate-600">
-                <span>Tax</span>
-                <span className="font-semibold">$0.00</span>
+                <span>KDV</span>
+                <span className="font-semibold">₺0.00</span>
               </div>
             </div>
 
             <div className="flex justify-between mb-6 pb-6 border-b border-slate-200">
-              <span className="text-lg font-bold text-slate-900">Total</span>
-              <span className="text-2xl font-bold text-slate-900">${totalAmount.toFixed(2)}</span>
+              <span className="text-lg font-bold text-slate-900">Toplam</span>
+              <span className="text-2xl font-bold text-slate-900">₺{totalAmount.toFixed(2)}</span>
             </div>
 
             <div className="space-y-3">
@@ -140,7 +140,7 @@ const Cart: React.FC = () => {
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                Proceed to Checkout
+                Ödemeye Geç
               </button>
               <button
                 onClick={() => navigate('/products')}
@@ -149,7 +149,7 @@ const Cart: React.FC = () => {
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>
-                Continue Shopping
+                Alışverişe Devam Et
               </button>
             </div>
 
@@ -159,8 +159,8 @@ const Cart: React.FC = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <div className="text-sm text-blue-900">
-                  <p className="font-semibold mb-1">Free Shipping</p>
-                  <p className="text-blue-700">On orders over $50</p>
+                  <p className="font-semibold mb-1">Ücretsiz Kargo</p>
+                  <p className="text-blue-700">500 TL ve üzeri siparişlerde</p>
                 </div>
               </div>
             </div>
