@@ -1,31 +1,11 @@
-﻿using MBVProject.Application.Commands.Auth;
-using MBVProject.Application.Commands.Cart;
-using MBVProject.Application.Commands.Categories;
-using MBVProject.Application.Commands.Orders;
-using MBVProject.Application.Commands.Payments;
-using MBVProject.Application.Commands.Products;
-using MBVProject.Application.Commands.Users;
-using MBVProject.Application.DTOs;
-using MBVProject.Application.DTOs.Auth;
-using MBVProject.Application.DTOs.User;
-using MBVProject.Application.Handlers.Auth;
-using MBVProject.Application.Handlers.Carts;
-using MBVProject.Application.Handlers.Categories;
-using MBVProject.Application.Handlers.Orders;
-using MBVProject.Application.Handlers.Payments;
-using MBVProject.Application.Handlers.Products;
-using MBVProject.Application.Handlers.Users;
-using MBVProject.Application.Queries.Cart;
-using MBVProject.Application.Queries.Categories;
-using MBVProject.Application.Queries.Orders;
-using MBVProject.Application.Queries.Payments;
-using MBVProject.Application.Queries.Products;
-using MBVProject.Application.Queries.Shipments;
-using MBVProject.Application.Queries.Users;
+using FluentValidation;
+using MBVProject.Application.Common.Behaviors;
+using MBVProject.Application.Common.Interfaces;
 using MBVProject.Domain.Interfaces;
 using MBVProject.Infrastructure.Persistance;
 using MBVProject.Infrastructure.Repositories;
 using MBVProject.Infrastructure.Services;
+using MBVProject.Infrastructure.UnitOfWork;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -37,11 +17,9 @@ namespace MBVProject.Infrastructure.DependencyInjection
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, string connectionString)
         {
-            // ✅ DbContext
             services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(connectionString));
 
-            // ✅ Repositories
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddScoped<IAddressRepository, AddressRepository>();
             services.AddScoped<ICartRepository, CartRepository>();
@@ -53,13 +31,23 @@ namespace MBVProject.Infrastructure.DependencyInjection
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<IRoleRepository, RoleRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IUnitOfWork, UnitOfWork.UnitOfWork>();
 
-            // ✅ Services
             services.AddScoped<IJwtService, JwtService>();
+            services.AddMemoryCache();
+            services.AddScoped<ICacheService, InMemoryCacheService>();
+            services.AddHttpContextAccessor();
+            services.AddScoped<ICurrentUserService, CurrentUserService>();
 
-            // ✅ MediatR - Tüm handler’ları tek seferde tarat
+            var applicationAssembly = Assembly.Load("MBVProject.Application");
+
             services.AddMediatR(cfg =>
-                cfg.RegisterServicesFromAssembly(Assembly.Load("MBVProject.Application")));
+                cfg.RegisterServicesFromAssembly(applicationAssembly));
+
+            services.AddValidatorsFromAssembly(applicationAssembly);
+
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
 
             return services;
         }
