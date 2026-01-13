@@ -1,9 +1,13 @@
 export interface PaymentMethod {
   id: string;
   name: string;
-  type: 'card' | 'cash' | 'bank_transfer' | 'digital_wallet';
+  nameEn: string;
+  type: 'card' | 'cash' | 'bank_transfer' | 'digital_wallet' | 'crypto';
   icon: string;
   enabled: boolean;
+  provider: string;
+  description: string;
+  setupRequired: boolean;
 }
 
 export interface PaymentRequest {
@@ -24,25 +28,81 @@ export interface PaymentResult {
 
 export const paymentMethods: PaymentMethod[] = [
   {
-    id: 'credit_card',
-    name: 'Kredi/Banka Kartı',
+    id: 'stripe',
+    name: 'Kredi/Banka Kartı (Stripe)',
+    nameEn: 'Credit/Debit Card (Stripe)',
     type: 'card',
     icon: '💳',
-    enabled: false
+    enabled: false,
+    provider: 'Stripe',
+    description: 'Uluslararası kart ödemeleri - Stripe ile güvenli ödeme',
+    setupRequired: true
+  },
+  {
+    id: 'iyzico',
+    name: 'Kredi/Banka Kartı (Iyzico)',
+    nameEn: 'Credit/Debit Card (Iyzico)',
+    type: 'card',
+    icon: '💳',
+    enabled: false,
+    provider: 'Iyzico',
+    description: 'Türkiye\'nin önde gelen ödeme sistemi',
+    setupRequired: true
+  },
+  {
+    id: 'paytr',
+    name: 'Kredi/Banka Kartı (PayTR)',
+    nameEn: 'Credit/Debit Card (PayTR)',
+    type: 'card',
+    icon: '💳',
+    enabled: false,
+    provider: 'PayTR',
+    description: 'Türkiye\'de güvenilir ödeme çözümü',
+    setupRequired: true
+  },
+  {
+    id: 'paypal',
+    name: 'PayPal',
+    nameEn: 'PayPal',
+    type: 'digital_wallet',
+    icon: '🅿️',
+    enabled: false,
+    provider: 'PayPal',
+    description: 'Dünya çapında güvenilir dijital cüzdan',
+    setupRequired: true
+  },
+  {
+    id: 'crypto',
+    name: 'Kripto Para',
+    nameEn: 'Cryptocurrency',
+    type: 'crypto',
+    icon: '₿',
+    enabled: false,
+    provider: 'CoinGate / BTCPay',
+    description: 'Bitcoin, Ethereum ve diğer kripto paralarla ödeme',
+    setupRequired: true
   },
   {
     id: 'cash_on_delivery',
     name: 'Kapıda Ödeme',
+    nameEn: 'Cash on Delivery',
     type: 'cash',
     icon: '💵',
-    enabled: true
+    enabled: true,
+    provider: 'Internal',
+    description: 'Ürün tesliminde nakit veya kart ile ödeme',
+    setupRequired: false
   },
   {
     id: 'bank_transfer',
     name: 'Havale/EFT',
+    nameEn: 'Bank Transfer',
     type: 'bank_transfer',
     icon: '🏦',
-    enabled: true
+    enabled: true,
+    provider: 'Internal',
+    description: 'Banka hesabına havale veya EFT ile ödeme',
+    setupRequired: false
   }
 ];
 
@@ -68,10 +128,10 @@ export const paymentService = {
       };
     }
 
-    if (request.paymentMethodId === 'credit_card') {
+    if (method.setupRequired) {
       return {
         success: false,
-        message: 'Kart ödemeleri için lütfen Stripe entegrasyonunu yapılandırın'
+        message: `${method.provider} entegrasyonu için lütfen PAYMENT_SETUP.md dosyasına bakın`
       };
     }
 
@@ -80,6 +140,14 @@ export const paymentService = {
       transactionId: `TXN-${Date.now()}`,
       message: 'Ödeme başarıyla alındı'
     };
+  },
+
+  getMethodsByType: (type: string): PaymentMethod[] => {
+    return paymentMethods.filter(method => method.type === type);
+  },
+
+  getMethodById: (id: string): PaymentMethod | undefined => {
+    return paymentMethods.find(method => method.id === id);
   },
 
   validatePaymentData: (request: PaymentRequest): { valid: boolean; errors: string[] } => {
