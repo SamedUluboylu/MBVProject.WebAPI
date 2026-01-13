@@ -1,0 +1,93 @@
+{
+  "nav": {
+    "customerService": "Customer Service",
+    "help": "Help",
+    "orderTracking": "Order Tracking",
+    "welcome": "Welcome",
+    "categories": "Categories",
+    "search": "Search for products, categories or brands...",
+    "searchButton": "Search",
+    "cart": "Cart",
+    "myAccount": "My Account",
+    "logout": "Logout",
+    "login": "Login",
+    "home": "Home",
+    "products": "Products",
+    "profile": "Profile"
+  },
+  "categories": {
+    "electronics": "Electronics",
+    "clothing": "Clothing",
+    "homeGarden": "Home & Garden",
+    "sports": "Sports",
+    "booksHobbies": "Books & Hobbies",
+    "cosmetics": "Cosmetics"
+  },
+  "footer": {
+    "quickLinks": "Quick Links",
+    "corporate": "Corporate",
+    "support": "Support",
+    "aboutUs": "About Us",
+    "contact": "Contact",
+    "career": "Career",
+    "helpCenter": "Help Center",
+    "returnCancel": "Return & Cancel",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfUse": "Terms of Use",
+    "allRightsReserved": "All rights reserved"
+  },
+  "auth": {
+    "loginTitle": "Login",
+    "registerTitle": "Register",
+    "email": "Email",
+    "password": "Password",
+    "name": "Full Name",
+    "loginButton": "Login",
+    "registerButton": "Register",
+    "noAccount": "Don't have an account?",
+    "haveAccount": "Already have an account?",
+    "registerLink": "Register",
+    "loginLink": "Login"
+  },
+  "products": {
+    "addToCart": "Add to Cart",
+    "inStock": "In Stock",
+    "outOfStock": "Out of Stock",
+    "discount": "Discount",
+    "featured": "Featured",
+    "newProducts": "New Products",
+    "bestSellers": "Best Sellers"
+  },
+  "cart": {
+    "title": "Shopping Cart",
+    "empty": "Your cart is empty",
+    "continueShoppingButton": "Continue Shopping",
+    "checkoutButton": "Proceed to Checkout",
+    "subtotal": "Subtotal",
+    "shipping": "Shipping",
+    "total": "Total",
+    "removeButton": "Remove"
+  },
+  "payment": {
+    "title": "Payment",
+    "selectMethod": "Select Payment Method",
+    "creditCard": "Credit/Debit Card",
+    "payAtDoor": "Pay at Door",
+    "completeOrderButton": "Complete Order"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "success": "Success",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "back": "Back",
+    "next": "Next",
+    "confirm": "Confirm",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort"
+  }
+}

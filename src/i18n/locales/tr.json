@@ -1,0 +1,93 @@
+{
+  "nav": {
+    "customerService": "Müşteri Hizmetleri",
+    "help": "Yardım",
+    "orderTracking": "Sipariş Takibi",
+    "welcome": "Hoş geldin",
+    "categories": "Kategoriler",
+    "search": "Ürün, kategori veya marka ara...",
+    "searchButton": "Ara",
+    "cart": "Sepet",
+    "myAccount": "Hesabım",
+    "logout": "Çıkış",
+    "login": "Giriş Yap",
+    "home": "Ana Sayfa",
+    "products": "Ürünler",
+    "profile": "Profilim"
+  },
+  "categories": {
+    "electronics": "Elektronik",
+    "clothing": "Giyim",
+    "homeGarden": "Ev & Bahçe",
+    "sports": "Spor",
+    "booksHobbies": "Kitap & Hobi",
+    "cosmetics": "Kozmetik"
+  },
+  "footer": {
+    "quickLinks": "Hızlı Bağlantılar",
+    "corporate": "Kurumsal",
+    "support": "Destek",
+    "aboutUs": "Hakkımızda",
+    "contact": "İletişim",
+    "career": "Kariyer",
+    "helpCenter": "Yardım Merkezi",
+    "returnCancel": "İade & İptal",
+    "privacyPolicy": "Gizlilik Politikası",
+    "termsOfUse": "Kullanım Şartları",
+    "allRightsReserved": "Tüm hakları saklıdır"
+  },
+  "auth": {
+    "loginTitle": "Giriş Yap",
+    "registerTitle": "Kayıt Ol",
+    "email": "E-posta",
+    "password": "Şifre",
+    "name": "Ad Soyad",
+    "loginButton": "Giriş Yap",
+    "registerButton": "Kayıt Ol",
+    "noAccount": "Hesabınız yok mu?",
+    "haveAccount": "Zaten hesabınız var mı?",
+    "registerLink": "Kayıt olun",
+    "loginLink": "Giriş yapın"
+  },
+  "products": {
+    "addToCart": "Sepete Ekle",
+    "inStock": "Stokta",
+    "outOfStock": "Stokta Yok",
+    "discount": "İndirim",
+    "featured": "Öne Çıkan",
+    "newProducts": "Yeni Ürünler",
+    "bestSellers": "En Çok Satanlar"
+  },
+  "cart": {
+    "title": "Alışveriş Sepeti",
+    "empty": "Sepetiniz boş",
+    "continueShoppingButton": "Alışverişe Devam Et",
+    "checkoutButton": "Ödemeye Geç",
+    "subtotal": "Ara Toplam",
+    "shipping": "Kargo",
+    "total": "Toplam",
+    "removeButton": "Kaldır"
+  },
+  "payment": {
+    "title": "Ödeme",
+    "selectMethod": "Ödeme Yöntemi Seçin",
+    "creditCard": "Kredi/Banka Kartı",
+    "payAtDoor": "Kapıda Ödeme",
+    "completeOrderButton": "Siparişi Tamamla"
+  },
+  "common": {
+    "loading": "Yükleniyor...",
+    "error": "Bir hata oluştu",
+    "success": "Başarılı",
+    "cancel": "İptal",
+    "save": "Kaydet",
+    "delete": "Sil",
+    "edit": "Düzenle",
+    "back": "Geri",
+    "next": "İleri",
+    "confirm": "Onayla",
+    "search": "Ara",
+    "filter": "Filtrele",
+    "sort": "Sırala"
+  }
+}

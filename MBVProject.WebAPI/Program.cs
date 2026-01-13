@@ -1,4 +1,4 @@
-﻿using MBVProject.Domain.Entities;
+using MBVProject.Domain.Entities;
 using MBVProject.Infrastructure.DependencyInjection;
 using MBVProject.Infrastructure.Persistance;
 using MBVProject.WebAPI.Middleware;
@@ -59,7 +59,9 @@ builder.Services.AddCors(options =>
     {
         policy.WithOrigins(
             "http://localhost:5173",    // Vite dev server
-            "https://localhost:5173"    // HTTPS if needed
+            "https://localhost:5173",   // HTTPS if needed
+            "http://localhost:4173",    // Vite preview
+            "https://localhost:4173"    // Vite preview HTTPS
         )
         .AllowAnyHeader()
         .AllowAnyMethod()

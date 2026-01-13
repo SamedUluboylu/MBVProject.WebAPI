@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useCart } from '../../contexts/CartContext';
+import { siteConfig } from '../../config/siteConfig';
+import LanguageSwitcher from '../LanguageSwitcher';
 
 const PublicLayout: React.FC = () => {
   const { user, isAuthenticated, logout } = useAuth();
@@ -51,6 +53,7 @@ const PublicLayout: React.FC = () => {
                 <a href="#" className="hover:text-blue-600 transition-colors hidden md:inline">Sipariş Takibi</a>
               </div>
               <div className="flex items-center gap-4 text-slate-600">
+                <LanguageSwitcher />
                 {isAuthenticated && (
                   <span className="text-xs">
                     Hoş geldin, <span className="font-semibold text-slate-900">{user?.name}</span>
@@ -64,11 +67,19 @@ const PublicLayout: React.FC = () => {
         <div className="max-w-[1600px] mx-auto px-4 lg:px-6">
           <div className="flex items-center gap-4 h-16 lg:h-20">
             <Link to="/" className="flex items-center gap-2 group flex-shrink-0">
-              <div className="w-9 h-9 lg:w-11 lg:h-11 bg-gradient-to-br from-blue-600 to-blue-500 rounded-xl flex items-center justify-center group-hover:scale-105 transition-transform duration-200 shadow-md">
-                <span className="text-white font-bold text-lg lg:text-xl">E</span>
-              </div>
+              {siteConfig.logoUrl ? (
+                <img
+                  src={siteConfig.logoUrl}
+                  alt={siteConfig.name}
+                  className="w-9 h-9 lg:w-11 lg:h-11 object-contain group-hover:scale-105 transition-transform duration-200"
+                />
+              ) : (
+                <div className="w-9 h-9 lg:w-11 lg:h-11 bg-gradient-to-br from-blue-600 to-blue-500 rounded-xl flex items-center justify-center group-hover:scale-105 transition-transform duration-200 shadow-md">
+                  <span className="text-white font-bold text-lg lg:text-xl">{siteConfig.logoText}</span>
+                </div>
+              )}
               <span className="text-xl lg:text-2xl font-bold text-slate-900 hidden sm:inline">
-                E-Mağaza
+                {siteConfig.name}
               </span>
             </Link>
 
@@ -249,13 +260,21 @@ const PublicLayout: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 mb-8">
             <div className="lg:col-span-2">
               <div className="flex items-center gap-2 mb-4">
-                <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-500 rounded-xl flex items-center justify-center shadow-lg">
-                  <span className="text-white font-bold text-xl">E</span>
-                </div>
-                <span className="text-2xl font-bold">E-Mağaza</span>
+                {siteConfig.logoUrl ? (
+                  <img
+                    src={siteConfig.logoUrl}
+                    alt={siteConfig.name}
+                    className="w-10 h-10 object-contain"
+                  />
+                ) : (
+                  <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-500 rounded-xl flex items-center justify-center shadow-lg">
+                    <span className="text-white font-bold text-xl">{siteConfig.logoText}</span>
+                  </div>
+                )}
+                <span className="text-2xl font-bold">{siteConfig.name}</span>
               </div>
               <p className="text-slate-400 max-w-md leading-relaxed text-sm mb-4">
-                Kaliteli ürünleri en uygun fiyatlarla sunan güvenilir alışveriş platformu. Güvenle alışveriş yapın.
+                {siteConfig.description}
               </p>
               <div className="flex gap-3">
                 <a href="#" className="w-9 h-9 bg-slate-800 hover:bg-blue-600 rounded-lg flex items-center justify-center transition-colors">
