@@ -13,9 +13,30 @@ const ProductCatalog: React.FC = () => {
   const [sortBy, setSortBy] = useState('');
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
-  const [showFilters, setShowFilters] = useState(false);
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [minRating, setMinRating] = useState(0);
+  const [onlyDiscounted, setOnlyDiscounted] = useState(false);
   const { addToCart } = useCart();
   const { showToast } = useToast();
+
+  const priceRanges = [
+    { label: 'Tümü', min: '', max: '' },
+    { label: '0 - 100 TL', min: '0', max: '100' },
+    { label: '100 - 500 TL', min: '100', max: '500' },
+    { label: '500 - 1000 TL', min: '500', max: '1000' },
+    { label: '1000 - 5000 TL', min: '1000', max: '5000' },
+    { label: '5000+ TL', min: '5000', max: '' },
+  ];
+
+  const categories = [
+    { id: '1', name: 'Elektronik', icon: '💻' },
+    { id: '2', name: 'Giyim', icon: '👕' },
+    { id: '3', name: 'Ev & Bahçe', icon: '🏠' },
+    { id: '4', name: 'Spor', icon: '⚽' },
+    { id: '5', name: 'Kitap', icon: '📚' },
+    { id: '6', name: 'Oyuncak', icon: '🎮' },
+  ];
 
   const fetchProducts = async () => {
     try {
@@ -68,8 +89,197 @@ const ProductCatalog: React.FC = () => {
     setSortBy('');
     setMinPrice('');
     setMaxPrice('');
+    setSelectedCategories([]);
+    setMinRating(0);
+    setOnlyDiscounted(false);
     setCurrentPage(1);
   };
+
+  const toggleCategory = (categoryId: string) => {
+    setSelectedCategories(prev =>
+      prev.includes(categoryId)
+        ? prev.filter(id => id !== categoryId)
+        : [...prev, categoryId]
+    );
+  };
+
+  const setPriceRange = (min: string, max: string) => {
+    setMinPrice(min);
+    setMaxPrice(max);
+  };
+
+  const hasActiveFilters = searchTerm || sortBy || minPrice || maxPrice || selectedCategories.length > 0 || minRating > 0 || onlyDiscounted;
+
+  const FilterSidebar = ({ isMobile = false }: { isMobile?: boolean }) => (
+    <div className={`${isMobile ? 'fixed inset-0 z-50 lg:hidden' : 'hidden lg:block'}`}>
+      {isMobile && (
+        <div
+          className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"
+          onClick={() => setShowMobileFilters(false)}
+        />
+      )}
+
+      <div className={`bg-white ${isMobile ? 'absolute right-0 top-0 bottom-0 w-80 shadow-2xl overflow-y-auto' : 'rounded-2xl border border-slate-200 shadow-sm sticky top-6'}`}>
+        {isMobile && (
+          <div className="flex items-center justify-between p-6 border-b border-slate-200 bg-gradient-to-r from-blue-50 to-cyan-50">
+            <h2 className="text-xl font-bold text-slate-900">Filtreler</h2>
+            <button
+              onClick={() => setShowMobileFilters(false)}
+              className="p-2 hover:bg-white rounded-lg transition-colors"
+            >
+              <svg className="w-6 h-6 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        )}
+
+        <div className="p-6 space-y-6">
+          {!isMobile && (
+            <div className="flex items-center justify-between mb-2">
+              <h2 className="text-xl font-bold text-slate-900">Filtreler</h2>
+              {hasActiveFilters && (
+                <button
+                  onClick={clearFilters}
+                  className="text-sm text-red-600 hover:text-red-700 font-medium"
+                >
+                  Temizle
+                </button>
+              )}
+            </div>
+          )}
+
+          <div className="space-y-4">
+            <h3 className="font-semibold text-slate-900 flex items-center gap-2">
+              <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+              </svg>
+              Kategoriler
+            </h3>
+            <div className="space-y-2">
+              {categories.map((category) => (
+                <label
+                  key={category.id}
+                  className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 cursor-pointer transition-colors group"
+                >
+                  <input
+                    type="checkbox"
+                    checked={selectedCategories.includes(category.id)}
+                    onChange={() => toggleCategory(category.id)}
+                    className="w-5 h-5 text-blue-600 rounded border-slate-300 focus:ring-2 focus:ring-blue-500"
+                  />
+                  <span className="text-2xl">{category.icon}</span>
+                  <span className="font-medium text-slate-700 group-hover:text-slate-900">{category.name}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <div className="border-t border-slate-200 pt-6 space-y-4">
+            <h3 className="font-semibold text-slate-900 flex items-center gap-2">
+              <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              Fiyat Aralığı
+            </h3>
+            <div className="space-y-2">
+              {priceRanges.map((range, index) => (
+                <button
+                  key={index}
+                  onClick={() => setPriceRange(range.min, range.max)}
+                  className={`w-full text-left px-4 py-2.5 rounded-xl font-medium transition-all ${
+                    minPrice === range.min && maxPrice === range.max
+                      ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-md'
+                      : 'bg-slate-50 text-slate-700 hover:bg-slate-100'
+                  }`}
+                >
+                  {range.label}
+                </button>
+              ))}
+            </div>
+
+            <div className="pt-2">
+              <p className="text-sm text-slate-600 mb-2 font-medium">Özel Aralık</p>
+              <div className="flex gap-2">
+                <input
+                  type="number"
+                  placeholder="Min ₺"
+                  value={minPrice}
+                  onChange={(e) => setMinPrice(e.target.value)}
+                  className="flex-1 px-3 py-2 border-2 border-slate-200 rounded-lg focus:outline-none focus:border-blue-500 transition-all text-sm"
+                />
+                <input
+                  type="number"
+                  placeholder="Max ₺"
+                  value={maxPrice}
+                  onChange={(e) => setMaxPrice(e.target.value)}
+                  className="flex-1 px-3 py-2 border-2 border-slate-200 rounded-lg focus:outline-none focus:border-blue-500 transition-all text-sm"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="border-t border-slate-200 pt-6 space-y-4">
+            <h3 className="font-semibold text-slate-900 flex items-center gap-2">
+              <svg className="w-5 h-5 text-amber-500" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+              </svg>
+              Minimum Puan
+            </h3>
+            <div className="space-y-2">
+              {[4, 3, 2, 1].map((rating) => (
+                <button
+                  key={rating}
+                  onClick={() => setMinRating(minRating === rating ? 0 : rating)}
+                  className={`w-full flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium transition-all ${
+                    minRating === rating
+                      ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-md'
+                      : 'bg-slate-50 text-slate-700 hover:bg-slate-100'
+                  }`}
+                >
+                  {Array.from({ length: rating }, (_, i) => (
+                    <svg key={i} className="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                      <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                    </svg>
+                  ))}
+                  <span>ve üzeri</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="border-t border-slate-200 pt-6">
+            <label className="flex items-center justify-between p-4 bg-gradient-to-r from-red-50 to-rose-50 rounded-xl cursor-pointer hover:from-red-100 hover:to-rose-100 transition-all">
+              <div className="flex items-center gap-3">
+                <svg className="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                </svg>
+                <div>
+                  <p className="font-semibold text-slate-900">İndirimli Ürünler</p>
+                  <p className="text-xs text-slate-600">Sadece indirimli ürünleri göster</p>
+                </div>
+              </div>
+              <input
+                type="checkbox"
+                checked={onlyDiscounted}
+                onChange={(e) => setOnlyDiscounted(e.target.checked)}
+                className="w-5 h-5 text-red-600 rounded border-slate-300 focus:ring-2 focus:ring-red-500"
+              />
+            </label>
+          </div>
+
+          {isMobile && hasActiveFilters && (
+            <button
+              onClick={clearFilters}
+              className="w-full py-3 bg-red-50 text-red-600 rounded-xl font-semibold hover:bg-red-100 transition-colors"
+            >
+              Tüm Filtreleri Temizle
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
 
   if (loading) {
     return (
@@ -81,15 +291,30 @@ const ProductCatalog: React.FC = () => {
   }
 
   return (
-    <div className="space-y-6 sm:space-y-8">
+    <div className="space-y-6">
       <div className="bg-gradient-to-br from-white to-slate-50 rounded-xl sm:rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-6 md:p-8">
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 text-slate-900">
-          Ürünleri Keşfedin
-        </h1>
-        <p className="text-slate-600 mb-4 sm:mb-6 text-sm sm:text-base">Kaliteli ürünler koleksiyonumuza göz atın</p>
+        <div className="flex items-start justify-between gap-4 mb-4">
+          <div className="flex-1">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 text-slate-900">
+              Ürünleri Keşfedin
+            </h1>
+            <p className="text-slate-600 text-sm sm:text-base">
+              {products.length} ürün bulundu
+            </p>
+          </div>
+          <button
+            onClick={() => setShowMobileFilters(true)}
+            className="lg:hidden flex items-center gap-2 px-4 py-2.5 bg-white border-2 border-slate-200 rounded-xl hover:border-blue-500 hover:bg-blue-50 transition-all text-slate-700 font-medium shadow-sm"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+            </svg>
+            Filtreler
+          </button>
+        </div>
 
-        <div className="space-y-4">
-          <div className="relative max-w-2xl">
+        <div className="space-y-3">
+          <div className="relative">
             <input
               type="text"
               placeholder="Ürün ara..."
@@ -102,36 +327,26 @@ const ProductCatalog: React.FC = () => {
             </svg>
           </div>
 
-          <div className="flex flex-wrap gap-3">
-            <button
-              onClick={() => setShowFilters(!showFilters)}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-white border-2 border-slate-200 rounded-xl hover:border-blue-500 hover:bg-blue-50 transition-all text-slate-700 font-medium"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-              </svg>
-              Filtreler
-            </button>
-
+          <div className="flex items-center gap-3">
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="px-4 py-2 bg-white border-2 border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 transition-all text-slate-700 font-medium"
+              className="flex-1 sm:flex-initial px-4 py-2.5 bg-white border-2 border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 transition-all text-slate-700 font-medium shadow-sm"
             >
               <option value="">Sırala</option>
-              <option value="price_asc">Fiyat (Düşük - Yüksek)</option>
-              <option value="price_desc">Fiyat (Yüksek - Düşük)</option>
-              <option value="name_asc">İsim (A-Z)</option>
-              <option value="name_desc">İsim (Z-A)</option>
+              <option value="price_asc">Fiyat: Düşük → Yüksek</option>
+              <option value="price_desc">Fiyat: Yüksek → Düşük</option>
+              <option value="name_asc">İsim: A → Z</option>
+              <option value="name_desc">İsim: Z → A</option>
               <option value="createdAt_desc">En Yeni</option>
             </select>
 
-            {(searchTerm || sortBy || minPrice || maxPrice) && (
+            {hasActiveFilters && (
               <button
                 onClick={clearFilters}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-red-50 border-2 border-red-200 rounded-xl hover:bg-red-100 transition-all text-red-700 font-medium"
+                className="hidden sm:flex items-center gap-2 px-4 py-2.5 bg-red-50 border-2 border-red-200 rounded-xl hover:bg-red-100 transition-all text-red-700 font-medium shadow-sm"
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
                 Temizle
@@ -139,173 +354,183 @@ const ProductCatalog: React.FC = () => {
             )}
           </div>
 
-          {showFilters && (
-            <div className="bg-white border-2 border-slate-200 rounded-xl p-4 space-y-4 animate-slideIn">
-              <h3 className="font-bold text-slate-900">Fiyat Aralığı</h3>
-              <div className="flex gap-3">
-                <input
-                  type="number"
-                  placeholder="Min"
-                  value={minPrice}
-                  onChange={(e) => setMinPrice(e.target.value)}
-                  className="flex-1 px-4 py-2 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 transition-all"
-                />
-                <input
-                  type="number"
-                  placeholder="Max"
-                  value={maxPrice}
-                  onChange={(e) => setMaxPrice(e.target.value)}
-                  className="flex-1 px-4 py-2 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 transition-all"
-                />
-              </div>
+          {hasActiveFilters && (
+            <div className="flex flex-wrap gap-2">
+              {selectedCategories.length > 0 && (
+                <span className="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-700 rounded-lg text-sm font-medium">
+                  {selectedCategories.length} kategori
+                </span>
+              )}
+              {(minPrice || maxPrice) && (
+                <span className="inline-flex items-center gap-1 px-3 py-1 bg-green-100 text-green-700 rounded-lg text-sm font-medium">
+                  {minPrice && `${minPrice}₺`} {minPrice && maxPrice && '-'} {maxPrice && `${maxPrice}₺`}
+                </span>
+              )}
+              {minRating > 0 && (
+                <span className="inline-flex items-center gap-1 px-3 py-1 bg-amber-100 text-amber-700 rounded-lg text-sm font-medium">
+                  {minRating}+ ⭐
+                </span>
+              )}
+              {onlyDiscounted && (
+                <span className="inline-flex items-center gap-1 px-3 py-1 bg-red-100 text-red-700 rounded-lg text-sm font-medium">
+                  İndirimli
+                </span>
+              )}
             </div>
           )}
         </div>
       </div>
 
-      {products.length === 0 ? (
-        <div className="text-center py-16 sm:py-20 bg-white rounded-xl sm:rounded-2xl shadow-sm border border-slate-200 px-4">
-          <div className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 bg-slate-100 rounded-full mb-4">
-            <svg className="w-8 h-8 sm:w-10 sm:h-10 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
-            </svg>
-          </div>
-          <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-2">Ürün bulunamadı</h3>
-          <p className="text-slate-500 mb-6 text-sm sm:text-base">Arama kriterlerinizi ayarlamayı deneyin</p>
-          <button
-            onClick={clearFilters}
-            className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-colors text-sm sm:text-base"
-          >
-            Filtreleri Temizle
-          </button>
-        </div>
-      ) : (
-        <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
-            {products.map((product) => (
-              <Link
-                key={product.id}
-                to={`/product/${product.id}`}
-                className="group bg-white rounded-xl sm:rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-slate-100 hover:border-blue-200"
-              >
-                <div className="aspect-square bg-gradient-to-br from-slate-50 to-slate-100 relative overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-cyan-500/5 group-hover:scale-110 transition-transform duration-500"></div>
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <svg className="w-16 h-16 sm:w-20 sm:h-20 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                    </svg>
-                  </div>
-                  {product.discountPercentage && (
-                    <div className="absolute top-2 right-2 sm:top-3 sm:right-3 bg-gradient-to-r from-red-500 to-rose-600 text-white text-xs font-bold px-2 py-1 sm:px-3 sm:py-1.5 rounded-full shadow-lg z-10">
-                      -%{product.discountPercentage} İNDİRİM
-                    </div>
-                  )}
-                  {!product.inStock && (
-                    <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center">
-                      <span className="text-white font-bold text-base sm:text-lg">Stokta Yok</span>
-                    </div>
-                  )}
-                </div>
+      <div className="lg:grid lg:grid-cols-[280px,1fr] gap-6">
+        <FilterSidebar />
+        {showMobileFilters && <FilterSidebar isMobile />}
 
-                <div className="p-4 sm:p-5">
-                  <h3 className="font-bold text-sm sm:text-base mb-2 text-slate-900 line-clamp-2 group-hover:text-blue-600 transition-colors min-h-[2.5rem] sm:min-h-[3rem]">
-                    {product.name}
-                  </h3>
-
-                  {product.categoryName && (
-                    <span className="inline-block text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded-lg mb-3">
-                      {product.categoryName}
-                    </span>
-                  )}
-
-                  <div className="flex items-baseline justify-between mb-4">
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-xl sm:text-2xl font-bold text-slate-900">
-                        ₺{product.price.toFixed(2)}
-                      </span>
-                      {product.compareAtPrice && (
-                        <span className="text-sm text-slate-400 line-through">
-                          ₺{product.compareAtPrice.toFixed(2)}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-
-                  {product.averageRating && (
-                    <div className="flex items-center gap-2 mb-4">
-                      <div className="flex items-center bg-amber-50 px-2.5 py-1 rounded-lg">
-                        <svg className="w-4 h-4 text-amber-400 fill-current" viewBox="0 0 20 20">
-                          <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
-                        </svg>
-                        <span className="ml-1.5 font-bold text-sm text-slate-700">{product.averageRating.toFixed(1)}</span>
-                      </div>
-                      <span className="text-xs text-slate-500">({product.reviewCount} değerlendirme)</span>
-                    </div>
-                  )}
-
-                  <button
-                    onClick={(e) => handleAddToCart(product, e)}
-                    disabled={!product.inStock}
-                    className={`w-full py-2.5 sm:py-3 rounded-xl font-semibold text-xs sm:text-sm transition-all duration-200 ${
-                      product.inStock
-                        ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white hover:from-blue-700 hover:to-cyan-700 shadow-sm hover:shadow-md hover:-translate-y-0.5'
-                        : 'bg-slate-100 text-slate-400 cursor-not-allowed'
-                    }`}
-                  >
-                    {product.inStock ? 'Sepete Ekle' : 'Stokta Yok'}
-                  </button>
-                </div>
-              </Link>
-            ))}
-          </div>
-
-          {totalPages > 1 && (
-            <div className="flex justify-center items-center gap-2 bg-white rounded-xl sm:rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-6">
-              <button
-                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                disabled={currentPage === 1}
-                className="px-3 py-2 sm:px-5 sm:py-2.5 border-2 border-slate-200 rounded-xl disabled:opacity-40 disabled:cursor-not-allowed hover:border-blue-500 hover:bg-blue-50 hover:text-blue-600 transition-all font-medium text-xs sm:text-sm"
-              >
-                Önceki
-              </button>
-              <div className="flex items-center gap-1 sm:gap-2">
-                {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
-                  let page;
-                  if (totalPages <= 5) {
-                    page = i + 1;
-                  } else if (currentPage <= 3) {
-                    page = i + 1;
-                  } else if (currentPage >= totalPages - 2) {
-                    page = totalPages - 4 + i;
-                  } else {
-                    page = currentPage - 2 + i;
-                  }
-                  return (
-                    <button
-                      key={page}
-                      onClick={() => setCurrentPage(page)}
-                      className={`w-8 h-8 sm:w-10 sm:h-10 rounded-xl font-semibold text-xs sm:text-sm transition-all ${
-                        currentPage === page
-                          ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-md'
-                          : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                      }`}
-                    >
-                      {page}
-                    </button>
-                  );
-                })}
+        <div>
+          {products.length === 0 ? (
+            <div className="text-center py-16 sm:py-20 bg-white rounded-xl sm:rounded-2xl shadow-sm border border-slate-200 px-4">
+              <div className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 bg-slate-100 rounded-full mb-4">
+                <svg className="w-8 h-8 sm:w-10 sm:h-10 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                </svg>
               </div>
+              <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-2">Ürün bulunamadı</h3>
+              <p className="text-slate-500 mb-6 text-sm sm:text-base">Arama kriterlerinizi ayarlamayı deneyin</p>
               <button
-                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                disabled={currentPage === totalPages}
-                className="px-3 py-2 sm:px-5 sm:py-2.5 border-2 border-slate-200 rounded-xl disabled:opacity-40 disabled:cursor-not-allowed hover:border-blue-500 hover:bg-blue-50 hover:text-blue-600 transition-all font-medium text-xs sm:text-sm"
+                onClick={clearFilters}
+                className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-colors text-sm sm:text-base shadow-lg"
               >
-                Sonraki
+                Filtreleri Temizle
               </button>
             </div>
+          ) : (
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
+                {products.map((product) => (
+                  <Link
+                    key={product.id}
+                    to={`/product/${product.id}`}
+                    className="group bg-white rounded-xl sm:rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-slate-100 hover:border-blue-200"
+                  >
+                    <div className="aspect-square bg-gradient-to-br from-slate-50 to-slate-100 relative overflow-hidden">
+                      <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-cyan-500/5 group-hover:scale-110 transition-transform duration-500"></div>
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <svg className="w-16 h-16 sm:w-20 sm:h-20 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                        </svg>
+                      </div>
+                      {product.discountPercentage && (
+                        <div className="absolute top-2 right-2 sm:top-3 sm:right-3 bg-gradient-to-r from-red-500 to-rose-600 text-white text-xs font-bold px-2 py-1 sm:px-3 sm:py-1.5 rounded-full shadow-lg z-10">
+                          -%{product.discountPercentage} İNDİRİM
+                        </div>
+                      )}
+                      {!product.inStock && (
+                        <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center">
+                          <span className="text-white font-bold text-base sm:text-lg">Stokta Yok</span>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="p-4 sm:p-5">
+                      <h3 className="font-bold text-sm sm:text-base mb-2 text-slate-900 line-clamp-2 group-hover:text-blue-600 transition-colors min-h-[2.5rem] sm:min-h-[3rem]">
+                        {product.name}
+                      </h3>
+
+                      {product.categoryName && (
+                        <span className="inline-block text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded-lg mb-3">
+                          {product.categoryName}
+                        </span>
+                      )}
+
+                      <div className="flex items-baseline justify-between mb-4">
+                        <div className="flex items-baseline gap-2">
+                          <span className="text-xl sm:text-2xl font-bold text-slate-900">
+                            ₺{product.price.toFixed(2)}
+                          </span>
+                          {product.compareAtPrice && (
+                            <span className="text-sm text-slate-400 line-through">
+                              ₺{product.compareAtPrice.toFixed(2)}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      {product.averageRating && (
+                        <div className="flex items-center gap-2 mb-4">
+                          <div className="flex items-center bg-amber-50 px-2.5 py-1 rounded-lg">
+                            <svg className="w-4 h-4 text-amber-400 fill-current" viewBox="0 0 20 20">
+                              <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                            </svg>
+                            <span className="ml-1.5 font-bold text-sm text-slate-700">{product.averageRating.toFixed(1)}</span>
+                          </div>
+                          <span className="text-xs text-slate-500">({product.reviewCount} değerlendirme)</span>
+                        </div>
+                      )}
+
+                      <button
+                        onClick={(e) => handleAddToCart(product, e)}
+                        disabled={!product.inStock}
+                        className={`w-full py-2.5 sm:py-3 rounded-xl font-semibold text-xs sm:text-sm transition-all duration-200 ${
+                          product.inStock
+                            ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white hover:from-blue-700 hover:to-cyan-700 shadow-sm hover:shadow-md hover:-translate-y-0.5'
+                            : 'bg-slate-100 text-slate-400 cursor-not-allowed'
+                        }`}
+                      >
+                        {product.inStock ? 'Sepete Ekle' : 'Stokta Yok'}
+                      </button>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+
+              {totalPages > 1 && (
+                <div className="flex justify-center items-center gap-2 bg-white rounded-xl sm:rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-6 mt-8">
+                  <button
+                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                    disabled={currentPage === 1}
+                    className="px-3 py-2 sm:px-5 sm:py-2.5 border-2 border-slate-200 rounded-xl disabled:opacity-40 disabled:cursor-not-allowed hover:border-blue-500 hover:bg-blue-50 hover:text-blue-600 transition-all font-medium text-xs sm:text-sm"
+                  >
+                    Önceki
+                  </button>
+                  <div className="flex items-center gap-1 sm:gap-2">
+                    {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
+                      let page;
+                      if (totalPages <= 5) {
+                        page = i + 1;
+                      } else if (currentPage <= 3) {
+                        page = i + 1;
+                      } else if (currentPage >= totalPages - 2) {
+                        page = totalPages - 4 + i;
+                      } else {
+                        page = currentPage - 2 + i;
+                      }
+                      return (
+                        <button
+                          key={page}
+                          onClick={() => setCurrentPage(page)}
+                          className={`w-8 h-8 sm:w-10 sm:h-10 rounded-xl font-semibold text-xs sm:text-sm transition-all ${
+                            currentPage === page
+                              ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-md'
+                              : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                          }`}
+                        >
+                          {page}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <button
+                    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                    disabled={currentPage === totalPages}
+                    className="px-3 py-2 sm:px-5 sm:py-2.5 border-2 border-slate-200 rounded-xl disabled:opacity-40 disabled:cursor-not-allowed hover:border-blue-500 hover:bg-blue-50 hover:text-blue-600 transition-all font-medium text-xs sm:text-sm"
+                  >
+                    Sonraki
+                  </button>
+                </div>
+              )}
+            </>
           )}
-        </>
-      )}
+        </div>
+      </div>
     </div>
   );
 };
