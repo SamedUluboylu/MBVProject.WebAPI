@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
+import { apiService } from '../../services/api';
+import { useToast } from '../../contexts/ToastContext';
 
 const Register: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -11,8 +12,8 @@ const Register: React.FC = () => {
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
   const navigate = useNavigate();
+  const { showToast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,10 +31,18 @@ const Register: React.FC = () => {
 
     setLoading(true);
     try {
-      await login(formData.email, formData.password);
-      navigate('/');
-    } catch (err) {
-      setError('Kayıt başarısız. Lütfen tekrar deneyin.');
+      await apiService.post('/api/Auth/register', {
+        email: formData.email,
+        password: formData.password,
+        userName: formData.name,
+      });
+
+      showToast('Kayıt başarılı! Giriş yapabilirsiniz.', 'success');
+      navigate('/login');
+    } catch (err: any) {
+      const errorMessage = err.response?.data?.message || err.response?.data || 'Kayıt başarısız. Bu e-posta zaten kullanılıyor olabilir.';
+      setError(errorMessage);
+      showToast(errorMessage, 'error');
     } finally {
       setLoading(false);
     }
