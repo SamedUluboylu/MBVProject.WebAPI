@@ -41,6 +41,20 @@ export interface CreateOrderCommand {
   }[];
 }
 
+export interface Category {
+  id: string;
+  name: string;
+  description?: string;
+  parentId?: string;
+}
+
+export interface Brand {
+  id: string;
+  name: string;
+  description?: string;
+  logoUrl?: string;
+}
+
 export const publicApi = {
   products: {
     getCatalog: (params: {
@@ -55,6 +69,14 @@ export const publicApi = {
       sortBy?: string;
       isDescending?: boolean;
     }) => apiService.get<PaginatedResult<PublicProduct>>('/api/public/products', params),
+  },
+
+  categories: {
+    getAll: () => apiService.get<Category[]>('/api/categories'),
+  },
+
+  brands: {
+    getAll: () => apiService.get<Brand[]>('/api/brands'),
   },
 
   orders: {
